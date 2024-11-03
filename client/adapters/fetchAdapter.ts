@@ -13,7 +13,7 @@ export const fetchAdapter = async ({
 }) => {
     const res = await axios({
         method,
-        baseURL: 'http://localhost:5000' + path,
+        baseURL: 'http://localhost:5000/' + path,
         data: body,
         headers: {
             "Content-Type": "application/json",

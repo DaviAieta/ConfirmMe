@@ -1,27 +1,40 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Bell, ChevronLeft, ChevronRight, Copy, List, LogOut, PlusCircle, User, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { CreateEvents } from "./create-events"
-
-interface Event {
-    id: number
-    name: string
-    date: string
-    confirmed: number
-    declined: number
-    pending: number
-}
+import { EventProps } from "../types"
+import { fetchAdapter } from "@/adapters/fetchAdapter"
+import { useToast } from "@/hooks/use-toast"
 
 export function ListEvents() {
-    const [events, setEvents] = useState<Event[]>([
-        { id: 1, name: "Aniversário de Marcia Lisander", date: "15/07/2024", confirmed: 15, declined: 5, pending: 10 },
-        { id: 2, name: "Casamento de Julio e Nicole", date: "10/12/2023", confirmed: 80, declined: 10, pending: 10 },
-        { id: 3, name: "5 anos da Luna Anita", date: "26/05/2023", confirmed: 20, declined: 5, pending: 5 },
-    ])
+    const [events, setEvents] = useState<EventProps[]>([])
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast()
 
+    const getEvents = async () => {
+        try {
+            const response = await fetchAdapter({
+                method: 'GET',
+                path: 'events'
+            })
+            if (response.status == 200) {
+                setEvents(response.data)
+                setLoading(false)
+            }
+        } catch {
+            toast({
+                title: 'Error'
+            })
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getEvents()
+    }, [])
     return (
         <div className="flex flex-1 overflow-hidden">
             <main className="flex-1 overflow-y-auto p-8">
@@ -33,17 +46,15 @@ export function ListEvents() {
                                 Create Event
                             </Button>
                         </SheetTrigger>
-                        <CreateEvents />
+                        <CreateEvents setEvents={setEvents} />
                     </Sheet>
-
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {events.map((event) => (
                         <Card key={event.id} className="overflow-hidden">
                             <CardHeader className="bg-indigo-500 text-white">
-                                <CardTitle>{event.name}</CardTitle>
-                                <p className="text-indigo-100">{event.date}</p>
+                                <CardTitle>{event.title}</CardTitle>
+                                <p className="text-indigo-100">{event.description}</p>
                             </CardHeader>
                             <CardContent className="p-6">
                                 <div className="flex justify-center mb-4">
@@ -56,7 +67,12 @@ export function ListEvents() {
                                             fill="transparent"
                                             stroke="#6437fe"
                                             strokeWidth="10"
-                                            strokeDasharray={`${(event.confirmed / (event.confirmed + event.declined + event.pending)) * 314} 314`}
+                                            strokeDasharray={
+                                                (event.confirmed + event.declined + event.pending === 0
+                                                    ? '0 314'
+                                                    : `${(event.confirmed / (event.confirmed + event.declined + event.pending)) * 314} 314`
+                                                )
+                                            }
                                         />
                                     </svg>
                                 </div>
@@ -64,28 +80,19 @@ export function ListEvents() {
                             <CardFooter className="flex justify-between">
                                 <Button variant="outline" size="sm">
                                     <Users className="w-4 h-4 mr-2" />
-                                    Convidados
+                                    Guests
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <Copy className="w-4 h-4 mr-2" />
-                                    Copiar Link
+                                    Copy Link
                                 </Button>
                                 <Button variant="outline" size="sm">
                                     <List className="w-4 h-4 mr-2" />
-                                    Lista
+                                    Guest list
                                 </Button>
                             </CardFooter>
                         </Card>
                     ))}
-                </div>
-
-                <div className="flex justify-center mt-8">
-                    <Button variant="outline" size="icon" className="mr-2">
-                        <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" size="icon" className="ml-2">
-                        <ChevronRight className="w-4 h-4" />
-                    </Button>
                 </div>
             </main>
         </div>

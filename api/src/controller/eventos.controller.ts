@@ -18,12 +18,23 @@ export class EventsController {
         try {
             const event = req.body
             console.log(event)
+
             const createdEvent = await prisma.events.create({
-                data: event
+                data: {
+                    title: event.title,
+                    description: event.description,
+                    dhStart: new Date(event.dhStart),
+                    dhEnd: new Date(event.dhEnd),
+                    address: event.address,
+                    peopleLimit: parseInt(event.people_limit, 10),
+                    status: event.status,
+                    price: parseInt(event.price, 10),
+                }
             })
 
             return res.send(createdEvent)
         } catch (error) {
+            console.log(error)
             return res.status(400).json({ error })
         }
     }

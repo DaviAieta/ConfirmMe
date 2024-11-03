@@ -42,6 +42,7 @@ enum STATUS {
 
 model Events {
   id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(uuid())
   title       String   @db.VarChar(255)
   description String   @db.VarChar(255)
   dhStart     DateTime
