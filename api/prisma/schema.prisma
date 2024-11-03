@@ -58,6 +58,6 @@ model Events {
 
 model Categories {
   id     Int     @id @default(autoincrement())
-  name   String  @db.VarChar(255)
+  title  String  @db.VarChar(255)
   active Boolean @default(true)
 }

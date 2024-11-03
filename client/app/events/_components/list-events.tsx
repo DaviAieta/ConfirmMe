@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react"
-import { Bell, ChevronLeft, ChevronRight, Copy, List, LogOut, PlusCircle, User, Users } from "lucide-react"
+import { Bell, ChevronLeft, ChevronRight, Copy, Info, List, LogOut, PlusCircle, User, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
@@ -87,8 +87,8 @@ export function ListEvents() {
                                     Copy Link
                                 </Button>
                                 <Button variant="outline" size="sm">
-                                    <List className="w-4 h-4 mr-2" />
-                                    Guest list
+                                    <Info className="w-4 h-4 mr-2" />
+                                    More Info
                                 </Button>
                             </CardFooter>
                         </Card>
