@@ -7,6 +7,7 @@ export class CategorieController {
             const categories = await prisma.categories.findMany({})
             if (!categories) {
                 return res.status(404).json('Not found')
+                // estudar mais sobre os tipos de erros
             }
             return res.send(categories)
         } catch (error) {
@@ -19,7 +20,7 @@ export class CategorieController {
             const category = req.body
             const createdCategory = await prisma.categories.create({
                 data: {
-                    name: category.title,
+                    title: category.title,
                     active: category.active
                 }
             })

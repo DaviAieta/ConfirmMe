@@ -27,6 +27,7 @@ export class EventsController {
                     peopleLimit: parseInt(event.people_limit, 10),
                     status: event.status,
                     price: parseInt(event.price, 10),
+                    category: event.category
                 }
             })
             return res.send(createdEvent)

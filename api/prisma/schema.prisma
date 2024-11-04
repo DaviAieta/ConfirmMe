@@ -53,11 +53,14 @@ model Events {
   price       Int
   confirmed   Int      @default(0)
   declined    Int      @default(0)
-  pending     Int      @default(0)
+
+  categoryId Int
+  category   Categories @relation(fields: [categoryId], references: [id])
 }
 
 model Categories {
-  id     Int     @id @default(autoincrement())
-  title  String  @db.VarChar(255)
-  active Boolean @default(true)
+  id     Int      @id @default(autoincrement())
+  title  String   @db.VarChar(255)
+  active Boolean  @default(true)
+  Events Events[]
 }

@@ -69,7 +69,7 @@ export function ListCategories() {
                     <TableBody>
                         {categories.map((category) => (
                             <TableRow key={category.id}>
-                                <TableCell className="font-medium">{category.name}</TableCell>
+                                <TableCell className="font-medium">{category.title}</TableCell>
                                 <TableCell className="text-right">
                                     <Badge variant="secondary">
                                         {category.active ? "Yes" : "No"}

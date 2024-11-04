@@ -49,7 +49,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                     people_limit: peopleLimit,
                     status: 'ACTIVATE',
                     price,
-                    image_path: 'vaitomarnocu'
                 }
             })
             if (response.status == 200) {

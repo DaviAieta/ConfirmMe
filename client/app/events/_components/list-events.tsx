@@ -68,9 +68,9 @@ export function ListEvents() {
                                             stroke="#6437fe"
                                             strokeWidth="10"
                                             strokeDasharray={
-                                                (event.confirmed + event.declined + event.pending === 0
+                                                (event.confirmed + event.declined === 0
                                                     ? '0 314'
-                                                    : `${(event.confirmed / (event.confirmed + event.declined + event.pending)) * 314} 314`
+                                                    : `${(event.confirmed / (event.confirmed + event.declined)) * 314} 314`
                                                 )
                                             }
                                         />

@@ -17,5 +17,4 @@ export type EventProps = {
     price: number;
     confirmed: number;
     declined: number;
-    pending: number;
 };
