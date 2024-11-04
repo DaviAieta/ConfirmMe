@@ -18,27 +18,52 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectGroup, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
 
-export type Categorie = {
+export type Category = {
     setCategories: Dispatch<SetStateAction<CategoriesProps[]>>
 }
 
-export const CreateCategorie = ({ setCategories }: Categorie) => {
+export const CreateCategory = ({ setCategories }: Category) => {
     const [title, setTitle] = useState("")
-    const [active, setActive] = useState("Yes")
+    const [active, setActive] = useState("true")
     const [submitting, setSubmitting] = useState(false);
     const { toast } = useToast()
 
-    const createdCategorie = () => {
+    const handleCreateCategory = async (e: any) => {
+        e.preventDefault()
+        setSubmitting(true)
 
+        try {
+            const response = await fetchAdapter({
+                method: "POST",
+                path: "categories/create",
+                body: {
+                    title,
+                    active: active === "true",
+                }
+            })
+            if (response.status == 200) {
+                toast({
+                    title: "category registered successfully",
+                    description: `Category: ${title}`
+                })
+                setCategories((prevCategory) => [...prevCategory, response.data])
+            }
+        } catch {
+            toast({
+                title: `Error`,
+            })
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     return (
         <SheetContent >
             <SheetHeader>
-                <SheetTitle>Create Event</SheetTitle>
-                <SheetDescription>Fill in the fields to add a new event</SheetDescription>
+                <SheetTitle>Create Category</SheetTitle>
+                <SheetDescription>Fill in the fields to add a new category</SheetDescription>
             </SheetHeader>
-            <form onSubmit={createdCategorie}>
+            <form onSubmit={handleCreateCategory}>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="title" className="text-right">
@@ -58,8 +83,8 @@ export const CreateCategorie = ({ setCategories }: Categorie) => {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="yes">Yes</SelectItem>
-                                    <SelectItem value="no" disabled={true}>No</SelectItem>
+                                    <SelectItem value="true">Yes</SelectItem>
+                                    <SelectItem value="false" disabled={true}>No</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>

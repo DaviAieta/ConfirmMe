@@ -32,7 +32,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
     const [submitting, setSubmitting] = useState(false);
     const { toast } = useToast()
 
-    const createdEvent = async (e: any) => {
+    const handleCreatedEvent = async (e: any) => {
         e.preventDefault()
         setSubmitting(true)
 
@@ -53,7 +53,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 }
             })
             if (response.status == 200) {
-                console.log(response.data)
                 toast({
                     title: "Event registered successfully",
                     description: `Event: ${title}`
@@ -61,7 +60,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 setEvents((prevEvents) => [...prevEvents, response.data])
             }
         } catch {
-
             toast({
                 title: `Error`,
             })
@@ -76,7 +74,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 <SheetTitle>Create Event</SheetTitle>
                 <SheetDescription>Fill in the fields to add a new event</SheetDescription>
             </SheetHeader>
-            <form onSubmit={createdEvent}>
+            <form onSubmit={handleCreatedEvent}>
                 <div className="grid gap-4 py-4">
                     < div className="grid grid-cols-4 items-center gap-4" >
                         <Label htmlFor="title" className="text-right">

@@ -17,8 +17,6 @@ export class EventsController {
     static async create(req: Request, res: Response) {
         try {
             const event = req.body
-            console.log(event)
-
             const createdEvent = await prisma.events.create({
                 data: {
                     title: event.title,
@@ -31,10 +29,8 @@ export class EventsController {
                     price: parseInt(event.price, 10),
                 }
             })
-
             return res.send(createdEvent)
         } catch (error) {
-            console.log(error)
             return res.status(400).json({ error })
         }
     }
