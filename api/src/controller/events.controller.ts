@@ -27,7 +27,7 @@ export class EventsController {
                     peopleLimit: parseInt(event.people_limit, 10),
                     status: event.status,
                     price: parseInt(event.price, 10),
-                    category: event.category
+                    categoryId: event.category
                 }
             })
             return res.send(createdEvent)
@@ -42,5 +42,23 @@ export class EventsController {
         } catch (error) {
             return res.status(400).json({ error })
         }
+    }
+
+    static async findOne(req: Request, res: Response) {
+        try {
+            const { uuid } = req.params
+            const event = await prisma.events.findUnique({
+                where: { uuid }
+            })
+
+            if (!event) {
+                return res.status(404).json('event not found')
+            }
+
+            return res.send(event)
+        } catch (error) {
+            return res.status(400).json('Error')
+        }
+
     }
 }
