@@ -171,14 +171,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                             setPeopleLimit(e.target.value)
                         }} />
                     </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="price" className="text-right">
-                            Price
-                        </Label>
-                        <Input id="price" className="col-span-3" placeholder="$" value={price} onChange={(e) => {
-                            setPrice(e.target.value)
-                        }} />
-                    </div>
                 </div >
                 <SheetFooter>
                     <SheetClose asChild>

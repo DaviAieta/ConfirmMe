@@ -8,6 +8,7 @@ import { CreateEvents } from "./create-events"
 import { EventProps } from "../types"
 import { fetchAdapter } from "@/adapters/fetchAdapter"
 import { useToast } from "@/hooks/use-toast"
+import Link from 'next/link'
 
 export function ListEvents() {
     const [events, setEvents] = useState<EventProps[]>([])
@@ -31,6 +32,23 @@ export function ListEvents() {
             setLoading(false);
         }
     }
+
+    const handleCopyLink = async (eventUuid: string) => {
+        const link = `${window.location.origin}/events/confirm/${eventUuid}`;
+
+        try {
+            await navigator.clipboard.writeText(link);
+            toast({
+                title: "Link copied!",
+                description: "The link was successfully copied to the clipboard."
+            });
+        } catch {
+            toast({
+                title: "Error",
+                description: "Failed to copy the link. Please try again."
+            });
+        }
+    };
 
     useEffect(() => {
         getEvents()
@@ -78,11 +96,14 @@ export function ListEvents() {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-between">
-                                <Button variant="outline" size="sm">
-                                    <Users className="w-4 h-4 mr-2" />
-                                    Guests
-                                </Button>
-                                <Button variant="outline" size="sm">
+                                <Link href={`/events/guests/${event.uuid}`}>
+                                    <Button variant="outline" size="sm">
+                                        <Users className="w-4 h-4 mr-2" />
+                                        Guests
+                                    </Button>
+                                </Link>
+
+                                <Button variant="outline" size="sm" onClick={() => handleCopyLink(event.uuid)}>
                                     <Copy className="w-4 h-4 mr-2" />
                                     Copy Link
                                 </Button>

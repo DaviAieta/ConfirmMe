@@ -6,6 +6,7 @@ export enum STATUS {
 
 export type EventProps = {
     id: number;
+    uuid: string;
     title: string;
     description: string;
     dhStart: Date;

@@ -18,7 +18,7 @@ export const NavBar = ({ children }: { children: React.ReactNode }) => {
                                 <PartyPopper className="w-5 h-5 mr-1" />
                                 Events
                             </a>
-                            <a href="#" className="flex items-center text-gray-700 hover:text-indigo-600">
+                            <a href="/calendar" className="flex items-center text-gray-700 hover:text-indigo-600">
                                 <Calendar className="w-5 h-5 mr-1" />
                                 Calendar
                             </a>
