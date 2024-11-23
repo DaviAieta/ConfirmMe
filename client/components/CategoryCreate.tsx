@@ -12,7 +12,7 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet"
 import { Dispatch, SetStateAction, useState } from "react";
-import { CategoriesProps } from "../types"
+import { CategoriesProps } from "../app/categories/types"
 import { fetchAdapter } from "@/adapters/fetchAdapter"
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useToast } from "@/hooks/use-toast"

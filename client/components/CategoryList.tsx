@@ -12,8 +12,8 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Sheet, SheetTrigger } from "@/components/ui/sheet"
-import { CreateCategory } from "./create-categories"
-import { CategoriesProps } from "../types"
+import { CreateCategory } from "./CategoryCreate"
+import { CategoriesProps } from "../app/categories/types"
 import { useEffect, useState } from "react"
 import { fetchAdapter } from "@/adapters/fetchAdapter"
 import { useToast } from "@/hooks/use-toast"

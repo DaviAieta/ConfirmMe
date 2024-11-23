@@ -1,17 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Calendar, CheckCircle, Info, LockKeyhole, MapPin, PartyPopper, Phone, Shield } from "lucide-react"
-import { EventProps } from '../types'
+import { Calendar, Info, MapPin, PartyPopper, Phone, Shield } from "lucide-react"
+import { EventProps } from '../app/events/types'
 import { fetchAdapter } from '@/adapters/fetchAdapter'
 import { useToast } from "@/hooks/use-toast"
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -30,6 +29,7 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
     const [cpf, setCpf] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
+    const [isSendingCode, setIsSendingCode] = useState(false);
     const { toast } = useToast()
 
     const formatPhoneNumber = (value: string) => {
@@ -48,6 +48,7 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
 
     const handleSendVerificationCode = async (e: React.FormEvent) => {
         e.preventDefault()
+        setIsSendingCode(true)
         try {
             const response = await fetchAdapter({
                 method: "POST",
@@ -69,6 +70,36 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                 description: "Failed to send code."
             });
         }
+        finally {
+            setIsSendingCode(false); // Reativa o botão após a conclusão da requisição
+        }
+    }
+
+    const handleVerifyCode = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        try {
+            const response = await fetchAdapter({
+                method: "POST",
+                path: "guests/verify-code",
+                body: {
+                    code: verificationCode
+                }
+            })
+            if (response.status == 200) {
+                toast({
+                    title: "You are verified",
+                    description: "Fill the fields"
+                })
+                setVerificationStep(2)
+            }
+        } catch {
+            toast({
+                title: "Error",
+                description: "Failed to send code."
+            })
+        }
+
     }
 
 
@@ -160,13 +191,13 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                                                     />
                                                 </div>
                                             </div>
-                                            <Button type="submit" className="w-full">
-                                                Send Verification Code
+                                            <Button type="submit" className="w-full" disabled={isSendingCode || codeSent}>
+                                                {isSendingCode ? "Sending..." : "Send Verification Code"}
                                             </Button>
                                         </form>
                                     </TabsContent>
                                     <TabsContent value="verify">
-                                        <form className="space-y-4">
+                                        <form className="space-y-4" onSubmit={handleVerifyCode}>
                                             <div className="space-y-2">
                                                 <Label htmlFor="verificationCode" className="text-sm font-medium">
                                                     Verification Code
@@ -255,18 +286,6 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                                         <Input
                                             id="name"
                                             name="name"
-                                            required
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="cpf" className="text-sm font-medium">
-                                            CPF
-                                        </Label>
-                                        <Input
-                                            id="cpf"
-                                            name="cpf"
-                                            type="number"
                                             required
                                             className="w-full"
                                         />

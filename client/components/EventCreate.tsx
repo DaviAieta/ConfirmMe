@@ -12,7 +12,7 @@ import {
     SheetTitle,
 } from "@/components/ui/sheet"
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { EventProps } from "../types"
+import { EventProps } from "../app/events/types"
 import { fetchAdapter } from "@/adapters/fetchAdapter"
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useToast } from "@/hooks/use-toast"
@@ -34,7 +34,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
     const [dhEnd, setDhEnd] = useState("")
     const [address, setAddress] = useState("")
     const [peopleLimit, setPeopleLimit] = useState("")
-    const [price, setPrice] = useState("")
     const [category, setCategory] = useState("")
     const [categories, setCategories] = useState<Category[]>([])
     const [submitting, setSubmitting] = useState(false);
@@ -72,7 +71,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                     address,
                     people_limit: peopleLimit,
                     status: 'ACTIVATE',
-                    price,
                     category: Number(category)
                 }
             })

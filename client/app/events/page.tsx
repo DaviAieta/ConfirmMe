@@ -1,5 +1,5 @@
-import { ListEvents } from "./_components/list-events";
-import { NavBar } from "../../components/navbar";
+import { ListEvents } from "../../components/EventList";
+import { NavBar } from "../../components/Navbar";
 
 export default function Page() {
     return (

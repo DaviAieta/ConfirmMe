@@ -5,4 +5,6 @@ export type GuestProps = {
     email: string;
     phone?: string;
     eventId: number;
+    confirmed: boolean;
+    declined: boolean;
 }

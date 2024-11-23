@@ -4,7 +4,8 @@ import { GuestsController } from "../controller/guests.controller"
 const router = express.Router()
 
 router.get("/:uuid", GuestsController.list)
-router.post("/create", GuestsController.create)
+router.post("/pre-register", GuestsController.preRegister)
 router.post("/send-code", GuestsController.sendCode)
+router.post("/verify-code", GuestsController.verifyCode)
 
 export default router

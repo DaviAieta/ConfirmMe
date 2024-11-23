@@ -1,4 +1,4 @@
-import { Pricing } from "./_components/pricing";
+import { Pricing } from "../../components/Pricing";
 
 export default function Page() {
     return (

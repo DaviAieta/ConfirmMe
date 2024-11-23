@@ -1,5 +1,5 @@
-import { Calendar } from "./_components/calendar";
-import { NavBar } from "../../components/navbar";
+import { Calendar } from "../../components/Calendar";
+import { NavBar } from "../../components/Navbar";
 
 export default function Page() {
     return (

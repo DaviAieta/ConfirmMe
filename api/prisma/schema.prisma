@@ -67,11 +67,13 @@ model Categories {
 }
 
 model Guests {
-  id      Int     @id @default(autoincrement())
-  name    String  @db.VarChar(255)
-  cpf     String  @db.VarChar(255)
-  email   String  @db.VarChar(255) // Adicionando um campo de e-mail, se necessário
-  phone   String? @db.VarChar(20) // Adicionando um campo de telefone, opcional
-  eventId Int
-  event   Events  @relation(fields: [eventId], references: [id])
+  id               Int      @id @default(autoincrement())
+  name             String   @db.VarChar(255)
+  email            String?  @db.VarChar(255)
+  phone            String?  @unique @db.VarChar(20)
+  confirmed        Boolean? @default(false)
+  declined         Boolean? @default(false)
+  verificationCode String?
+  eventId          Int
+  event            Events   @relation(fields: [eventId], references: [id])
 }

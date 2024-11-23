@@ -12,7 +12,7 @@ export type EventProps = {
     dhStart: Date;
     dhEnd: Date;
     address: string;
-    people_limit: number;
+    peopleLimit: number;
     status: STATUS;
     image_path: string;
     price: number;

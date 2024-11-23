@@ -1,5 +1,5 @@
-import { ListCategories } from "./_components/list-categories";
-import { NavBar } from "../../components/navbar";
+import { ListCategories } from "../../components/CategoryList";
+import { NavBar } from "../../components/Navbar";
 
 export default function Page() {
     return (

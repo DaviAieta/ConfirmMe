@@ -1,12 +1,16 @@
 "use client"
 import { Card } from "@/components/ui/card"
 import { useEffect, useState } from "react"
-import { GuestProps } from "../guests/types"
-import { EventProps } from "../types"
+import { GuestProps } from "../app/events/guests/types"
+import { EventProps } from "../app/events/types"
 import { fetchAdapter } from "@/adapters/fetchAdapter"
 import { useToast } from "@/hooks/use-toast"
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale'
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetTrigger } from "@/components/ui/sheet"
+import { PlusCircle } from "lucide-react"
+import { PreRegister } from "./PreRegisterGuest"
 
 export const ListGuests = ({ params }: { params: { uuid: string } }) => {
     const [guests, setGuests] = useState<GuestProps[]>([])
@@ -49,11 +53,6 @@ export const ListGuests = ({ params }: { params: { uuid: string } }) => {
             })
             if (response.status == 200 && response.data) {
                 setGuests(response.data)
-            } else {
-                toast({
-                    title: 'Guests not found',
-                    description: 'The guests you are looking for does not exist.'
-                })
             }
         } catch {
             toast({
@@ -72,6 +71,18 @@ export const ListGuests = ({ params }: { params: { uuid: string } }) => {
 
     return (
         <Card className="w-full max-w-4xl mx-auto my-8 p-8 bg-white shadow-lg">
+            <div className="flex justify-end">
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button className="bg-indigo-500 hover:bg-indigo-600 ml-auto">
+                            <PlusCircle className="w-5 h-5 mr-2" />
+                            Pre Register
+                        </Button>
+                    </SheetTrigger>
+                    <PreRegister params={params} />
+                </Sheet>
+            </div>
+
             <div className="space-y-6">
                 <div className="text-center border-b pb-6">
                     <h1 className="text-3xl font-bold mb-2">{event?.title}</h1>
@@ -91,7 +102,7 @@ export const ListGuests = ({ params }: { params: { uuid: string } }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {guests.map((guest) => (
+                            {guests.filter((guest) => guest.confirmed).map((guest) => (
                                 <tr key={guest.id} className="border-b">
                                     <td className="py-2 px-4">{guest.name}</td>
                                     <td className="py-2 px-4">{guest.email}</td>
@@ -103,7 +114,7 @@ export const ListGuests = ({ params }: { params: { uuid: string } }) => {
 
                 <div className="text-center text-sm text-gray-500 pt-6 border-t">
                     <p>Total of guests: {guests.length}</p>
-                    <p>Document generated {new Date().toLocaleDateString()}</p>
+                    <p>Document generated {format(new Date(), 'MM/dd/yyyy', { locale: enUS })}</p>
                 </div>
             </div>
         </Card>
