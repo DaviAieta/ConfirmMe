@@ -23,7 +23,7 @@ enum GENDER {
   WOMEN
 }
 
-model People {
+model Users {
   id       Int      @id @default(autoincrement())
   name     String   @db.VarChar(255)
   email    String   @db.VarChar(255)
@@ -54,26 +54,17 @@ model Events {
   declined    Int      @default(0)
   imagePath   String?  @db.VarChar(255)
 
-  categoryId Int
-  category   Categories @relation(fields: [categoryId], references: [id])
-  Guests     Guests[]
-}
-
-model Categories {
-  id     Int      @id @default(autoincrement())
-  title  String   @db.VarChar(255)
-  active Boolean  @default(true)
-  Events Events[]
+  Guests Guests[]
 }
 
 model Guests {
   id               Int      @id @default(autoincrement())
   name             String   @db.VarChar(255)
-  email            String?  @db.VarChar(255)
-  phone            String?  @unique @db.VarChar(20)
+  email            String?  @unique @db.VarChar(255)
+  phone            String?  @db.VarChar(20)
   confirmed        Boolean? @default(false)
   declined         Boolean? @default(false)
   verificationCode String?
   eventId          Int
-  event            Events   @relation(fields: [eventId], references: [id])
+  event            Events   @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }

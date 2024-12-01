@@ -22,10 +22,6 @@ export const NavBar = ({ children }: { children: React.ReactNode }) => {
                                 <Calendar className="w-5 h-5 mr-1" />
                                 Calendar
                             </a>
-                            <a href="/categories" className="flex items-center text-gray-700 hover:text-indigo-600">
-                                <ChartColumn className="w-5 h-5 mr-1" />
-                                Categories
-                            </a>
                         </div>
                     </div>
                     <div>

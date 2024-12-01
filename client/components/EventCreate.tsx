@@ -11,20 +11,14 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet"
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { EventProps } from "../app/events/types"
 import { fetchAdapter } from "@/adapters/fetchAdapter"
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useToast } from "@/hooks/use-toast"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export type Event = {
     setEvents: Dispatch<SetStateAction<EventProps[]>>
-}
-
-export type Category = {
-    id: number,
-    title: string,
 }
 
 export const CreateEvents = ({ setEvents }: Event) => {
@@ -34,26 +28,8 @@ export const CreateEvents = ({ setEvents }: Event) => {
     const [dhEnd, setDhEnd] = useState("")
     const [address, setAddress] = useState("")
     const [peopleLimit, setPeopleLimit] = useState("")
-    const [category, setCategory] = useState("")
-    const [categories, setCategories] = useState<Category[]>([])
     const [submitting, setSubmitting] = useState(false);
     const { toast } = useToast()
-
-    const getCategories = async () => {
-        try {
-            const response = await fetchAdapter({
-                method: "GET",
-                path: "categories"
-            })
-            if (response.status == 200) {
-                setCategories(response.data)
-            }
-        } catch {
-            toast({
-                title: "Error"
-            })
-        }
-    }
 
     const handleCreatedEvent = async (e: any) => {
         e.preventDefault()
@@ -71,7 +47,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                     address,
                     people_limit: peopleLimit,
                     status: 'ACTIVATE',
-                    category: Number(category)
                 }
             })
             if (response.status == 200) {
@@ -89,10 +64,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
             setSubmitting(false)
         }
     }
-
-    useEffect(() => {
-        getCategories();
-    }, [])
 
     return (
         <SheetContent >
@@ -117,25 +88,6 @@ export const CreateEvents = ({ setEvents }: Event) => {
                         <Input id="description" className="col-span-3" value={description} onChange={(e) => {
                             setDescription(e.target.value)
                         }} />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="category" className="text-right">
-                            Category
-                        </Label>
-                        <Select onValueChange={setCategory}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {categories.map((category) => (
-                                        <SelectItem key={category.id} value={category.id.toString()}>
-                                            {category.title}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="dhStart" className="text-right">

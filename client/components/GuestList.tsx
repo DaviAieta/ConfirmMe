@@ -10,18 +10,12 @@ import { enUS } from 'date-fns/locale'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetTrigger } from "@/components/ui/sheet"
 import { PlusCircle } from "lucide-react"
-import { PreRegister } from "./PreRegisterGuest"
+import { PreRegister } from "./PreRegisterDialog"
 
 export const ListGuests = ({ params }: { params: { uuid: string } }) => {
     const [guests, setGuests] = useState<GuestProps[]>([])
     const [event, setEvent] = useState<EventProps | null>(null)
     const { toast } = useToast()
-
-    const eventDetails = {
-        name: "",
-        date: "",
-        location: "",
-    }
 
     const getEvent = async () => {
         try {

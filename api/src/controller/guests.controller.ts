@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { prisma } from '../lib/prisma'
 import crypto from "crypto"
-import twilio from "twilio"
+import { sendMail } from '../services/verificationService'
 
 export class GuestsController {
     static async list(req: Request, res: Response) {
@@ -32,7 +32,7 @@ export class GuestsController {
 
     static async preRegister(req: Request, res: Response) {
         try {
-            const { name, phone, uuid } = req.body
+            const { name, email, uuid } = req.body
             const event = await prisma.events.findUnique({
                 where: { uuid }
             })
@@ -41,15 +41,29 @@ export class GuestsController {
                 return res.status(404).json("Event not found");
             }
 
-            const cleanedPhone = phone.replace(/[()\-\s]/g, '')
+            const existingGuest = await prisma.guests.findUnique({
+                where: { email }
+            })
+
+            if (existingGuest) {
+                return res.status(400).json("Guest with this email already exists")
+            }
 
             const createdPreRegister = await prisma.guests.create({
                 data: {
                     name: name,
-                    phone: cleanedPhone,
+                    email: email,
                     eventId: event?.id
                 }
             })
+
+            const link = "http://localhost:3000/events/confirm/" + uuid
+            sendMail(
+                String(email),
+                "Confirm your attendance " + name + "! 🎉",
+                "Click this Link: " + link + "✔️",
+            )
+
             return res.send(createdPreRegister)
         } catch (error) {
             return res.status(400).json({ error })
@@ -58,12 +72,10 @@ export class GuestsController {
 
     static async sendCode(req: Request, res: Response) {
         try {
-            const { phone } = req.body
-            const cleanedPhone = phone.replace(/[()\-\s]/g, '')
+            const { email } = req.body
 
-            // verificar se o numero realmente existe
             const guest = await prisma.guests.findFirst({
-                where: { phone: cleanedPhone }
+                where: { email: email }
             })
 
             if (!guest) {
@@ -71,17 +83,20 @@ export class GuestsController {
 
             }
 
-            // gerar um codigo e registrar ele no banco de dados
             const verificationCode = crypto.randomInt(100000, 999999).toString();
 
             const createdVerificationCode = await prisma.guests.update({
-                where: { phone: cleanedPhone },
+                where: { email: email },
                 data: {
                     verificationCode,
                 },
             })
 
-            // mandar um sms para o usuario com o codigo tal
+            sendMail(
+                String(guest.email),
+                "Confirm your attendance! 🎉",
+                "Your code: " + verificationCode + " ✔️",
+            )
 
             return res.send(createdVerificationCode)
         } catch (error) {

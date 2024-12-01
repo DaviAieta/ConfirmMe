@@ -4,47 +4,26 @@ import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Calendar, Info, MapPin, PartyPopper, Phone, Shield } from "lucide-react"
+import { Calendar, Info, Mail, MapPin, PartyPopper, Shield } from "lucide-react"
 import { EventProps } from '../app/events/types'
 import { fetchAdapter } from '@/adapters/fetchAdapter'
 import { useToast } from "@/hooks/use-toast"
 import { format } from 'date-fns'
 import { enUS } from 'date-fns/locale'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const countryCodes = [
-    { code: '+1', country: 'US' },
-]
 export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
-    const [isVerified, setIsVerified] = useState(false)
     const [verificationStep, setVerificationStep] = useState(1)
     const [verificationCode, setVerificationCode] = useState("")
-    const [countryCode, setCountryCode] = useState('+1')
     const [codeSent, setCodeSent] = useState(false)
     const [event, setEvent] = useState<EventProps | null>(null)
     const [eventNotFound, setEventNotFound] = useState(false)
     const [name, setName] = useState("")
-    const [cpf, setCpf] = useState("")
     const [email, setEmail] = useState("")
     const [phone, setPhone] = useState("")
     const [isSendingCode, setIsSendingCode] = useState(false);
     const { toast } = useToast()
-
-    const formatPhoneNumber = (value: string) => {
-        const phoneNumber = value.replace(/[^\d]/g, '')
-        const phoneNumberLength = phoneNumber.length
-        if (phoneNumberLength < 4) return phoneNumber
-        if (phoneNumberLength < 7) {
-            return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
-        }
-        return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
-    }
-    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const formattedPhone = formatPhoneNumber(e.target.value)
-        setPhone(formattedPhone)
-    }
 
     const handleSendVerificationCode = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -54,7 +33,7 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                 method: "POST",
                 path: "guests/send-code",
                 body: {
-                    phone
+                    email
                 }
             })
             if (response.status == 200) {
@@ -71,7 +50,7 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
             });
         }
         finally {
-            setIsSendingCode(false); // Reativa o botão após a conclusão da requisição
+            setIsSendingCode(false)
         }
     }
 
@@ -139,9 +118,9 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                     <div className="flex-1 hidden lg:block bg-primary">
                         <div className="flex flex-col justify-center items-center h-full text-white space-y-8">
                             <PartyPopper className="w-24 h-24" />
-                            <h1 className="text-4xl font-bold text-center">Confirm Your Number</h1>
+                            <h1 className="text-4xl font-bold text-center">Confirm Your E-mail</h1>
                             <p className="text-xl text-center max-w-md">
-                                Verify your phone number to confirm your attendance at the party.
+                                Verify your E-mail to confirm your attendance at the party.
                             </p>
                         </div>
                     </div>
@@ -149,8 +128,8 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                         <Card className="w-full max-w-2xl">
                             <CardHeader>
                                 <div className="flex items-center space-x-2">
-                                    <Phone className="w-6 h-6 text-primary" />
-                                    <CardTitle className="text-2xl font-bold">Phone Verification</CardTitle>
+                                    <Mail className="w-6 h-6 text-primary" />
+                                    <CardTitle className="text-2xl font-bold">E-mail Verification</CardTitle>
                                 </div>
                                 <CardDescription>Enhance your account security with phone verification</CardDescription>
                             </CardHeader>
@@ -164,30 +143,20 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                                         <form onSubmit={handleSendVerificationCode} className="space-y-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="phone" className="text-sm font-medium">
-                                                    Phone Number
+                                                    E-mail
                                                 </Label>
                                                 <div className="flex">
-                                                    <Select value={countryCode} onValueChange={setCountryCode}>
-                                                        <SelectTrigger className="w-[140px]">
-                                                            <SelectValue placeholder="Country" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {countryCodes.map((country) => (
-                                                                <SelectItem key={country.code} value={country.code}>
-                                                                    {country.code} {country.country}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectContent>
-                                                    </Select>
                                                     <Input
-                                                        id="phone"
-                                                        name="phone"
-                                                        type="tel"
+                                                        id="email"
+                                                        name="email"
+                                                        type="email"
                                                         required
-                                                        value={phone}
-                                                        onChange={handlePhoneChange}
+                                                        value={email}
+                                                        onChange={(e) => {
+                                                            setEmail(e.target.value)
+                                                        }}
                                                         className="flex-1 ml-2"
-                                                        placeholder="(555) 555-5555"
+                                                        placeholder="name@mail.com"
                                                     />
                                                 </div>
                                             </div>
