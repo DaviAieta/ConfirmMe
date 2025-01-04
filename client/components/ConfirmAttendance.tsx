@@ -14,15 +14,20 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
-    const [verificationStep, setVerificationStep] = useState(1)
+    const [verificationStep, setVerificationStep] = useState<number>(() => {
+        const savedStep = localStorage.getItem(`verificationStep_${params.uuid}`)
+        return savedStep ? parseInt(savedStep, 10) : 1
+    })
     const [verificationCode, setVerificationCode] = useState("")
     const [codeSent, setCodeSent] = useState(false)
     const [event, setEvent] = useState<EventProps | null>(null)
     const [eventNotFound, setEventNotFound] = useState(false)
     const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
+    const [email, setEmail] = useState(() => {
+        return localStorage.getItem(`email_${params.uuid}`) || ""
+    })
     const [phone, setPhone] = useState("")
-    const [isSendingCode, setIsSendingCode] = useState(false);
+    const [isSendingCode, setIsSendingCode] = useState(false)
     const { toast } = useToast()
 
     const handleSendVerificationCode = async (e: React.FormEvent) => {
@@ -40,14 +45,14 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                 toast({
                     title: "code sent",
                     description: "Verify your SMS."
-                });
+                })
                 setCodeSent(true)
             }
         } catch {
             toast({
                 title: "Error",
                 description: "Failed to send code."
-            });
+            })
         }
         finally {
             setIsSendingCode(false)
@@ -81,7 +86,6 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
 
     }
 
-
     const getEvent = async () => {
         try {
             const response = await fetchAdapter({
@@ -107,9 +111,44 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
         }
     }
 
+    const handleConfirmAttendece = async (e: any) => {
+        e.preventDefault()
+        try {
+            const response = await fetchAdapter({
+                method: "POST",
+                path: "guests/confirm",
+                body: {
+                    email,
+                    phone,
+                    eventUuid: params?.uuid
+                }
+            })
+            if (response.status == 200) {
+                toast({
+                    title: "Congratulations you're confirme!!",
+                    description: `Event: ${event?.title}`
+                })
+                setVerificationStep(3)
+            }
+        } catch {
+            toast({
+                variant: "destructive",
+                title: `Error`,
+            })
+        }
+    }
+
     useEffect(() => {
         getEvent()
     }, [])
+
+    useEffect(() => {
+        localStorage.setItem(`verificationStep_${params.uuid}`, verificationStep.toString())
+    }, [verificationStep, params.uuid])
+
+    useEffect(() => {
+        localStorage.setItem(`email_${params.uuid}`, email)
+    }, [email, params.uuid])
 
     return (
         <div className="min-h-screen flex flex-col bg-white text-gray-900">
@@ -245,20 +284,9 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="space-y-4">
+                            <div className="space-y-4 py-10">
                                 <h2 className="text-3xl font-bold">Confirm Your Attendance</h2>
-                                <form className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="name" className="text-sm font-medium">
-                                            Name
-                                        </Label>
-                                        <Input
-                                            id="name"
-                                            name="name"
-                                            required
-                                            className="w-full"
-                                        />
-                                    </div>
+                                <form className="space-y-4" onSubmit={handleConfirmAttendece}>
                                     <div className="space-y-2">
                                         <Label htmlFor="email" className="text-sm font-medium">
                                             Email
@@ -267,37 +295,55 @@ export const ConfirmAttendance = ({ params }: { params: { uuid: string } }) => {
                                             id="email"
                                             name="email"
                                             type="email"
+                                            value={email}
+                                            readOnly
                                             required
-                                            className="w-full"
+                                            className="w-full bg-muted"
                                         />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="phone" className="text-sm font-medium">
-                                            Phone
+                                            Phone (optional)
                                         </Label>
                                         <Input
                                             id="phone"
                                             name="phone"
                                             type="phone"
-                                            required
+                                            value={phone}
+                                            onChange={(e) => {
+                                                setPhone(e.target.value)
+                                            }}
                                             className="w-full"
                                         />
                                     </div>
                                     <Button type="submit" className="w-full">
                                         Confirm Attendance
                                     </Button>
-                                    <Button type="button" className="w-full" variant={"destructive"}>
-                                        Reject Attendance
-                                    </Button>
                                 </form>
                             </div>
+
                         </div>
                         <p className="text-sm text-gray-500 mt-8">
                             For any questions, please contact us at events@email.com or call +1 (555) 123-4567
                         </p>
                     </div>
                 </div>
+            )
+            }
+            {verificationStep === 3 && (
+                <div className="flex min-h-screen justify-center items-center bg-white">
+                    <div className="text-center space-y-4">
+                        <h1 className="text-4xl font-bold text-indigo-700">You are Confirmed!</h1>
+                        <p className="text-lg">Thank you for confirming your attendance.</p>
+                        <p className="text-sm text-gray-600">
+                            Event: <strong>{event?.title}</strong>
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            Location: <strong>{event?.address}</strong>
+                        </p>
+                    </div>
+                </div>
             )}
-        </div>
+        </div >
     )
 }

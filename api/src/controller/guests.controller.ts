@@ -122,4 +122,52 @@ export class GuestsController {
             return res.status(400).json({ error })
         }
     }
+
+    static async confirmGuest(req: Request, res: Response) {
+        try {
+            const { email, phone, eventUuid } = req.body
+            console.log(email, eventUuid)
+
+            if (!email || !eventUuid) {
+                return res.status(400).json({ error: "Email and event UUID are required." })
+            }
+
+            const event = await prisma.events.findUnique({
+                where: { uuid: eventUuid },
+            })
+
+            if (!event) {
+                return res.status(404).json({ error: "Event not found." });
+            }
+
+            const existingGuest = await prisma.guests.findFirst({
+                where: { email, eventId: event.id },
+            })
+
+            if (!existingGuest) {
+                return res.status(404).json({ error: "Guest not registered for this event." });
+            }
+
+            await prisma.guests.update({
+                where: { id: existingGuest.id },
+                data: {
+                    confirmed: true,
+                    declined: false,
+                    phone: phone || existingGuest.phone,
+                },
+            })
+
+            const updatedEvent = await prisma.events.update({
+                where: { id: event.id },
+                data: {
+                    confirmed: event.confirmed + 1,
+                },
+            })
+
+            return res.send(updatedEvent)
+
+        } catch (error) {
+            return res.status(400).json(error)
+        }
+    }
 }

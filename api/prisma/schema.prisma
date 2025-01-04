@@ -55,6 +55,9 @@ model Events {
   imagePath   String?  @db.VarChar(255)
 
   Guests Guests[]
+
+  Categories   Categories @relation(fields: [categoriesId], references: [id])
+  categoriesId Int
 }
 
 model Guests {
@@ -67,4 +70,13 @@ model Guests {
   verificationCode String?
   eventId          Int
   event            Events   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model Categories {
+  id    Int    @id @default(autoincrement())
+  uuid  String @unique @default(uuid())
+  name  String @db.VarChar(255)
+  color String @db.VarChar(255)
+
+  Events Events[]
 }

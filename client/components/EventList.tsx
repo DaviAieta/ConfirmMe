@@ -12,6 +12,7 @@ import { Spinner } from "./Spinner"
 import { Input } from "./ui/input"
 import Link from "next/link"
 import { EventCard } from "./EventCard"
+import { Dialog, DialogTrigger } from "./ui/dialog"
 
 export function ListEvents() {
     const [events, setEvents] = useState<EventProps[]>([])
@@ -64,6 +65,19 @@ export function ListEvents() {
         )
     }
 
+    if (events.length == 0) {
+        return (
+            <div className="flex flex-1 items-center justify-center min-h-screen">
+                <main className="bg-white rounded-lg p-10 w-full max-w-2xl text-center">
+                    <h1 className="text-4xl font-bold text-gray-900">No events have been created yet</h1>
+                    <div className="mt-5">
+                        <CreateEvents setEvents={setEvents} />
+                    </div>
+                </main>
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-1 overflow-hidden">
             <main className="flex-1 overflow-y-auto p-10">
@@ -71,7 +85,7 @@ export function ListEvents() {
                     <div className="relative w-full md:w-2/3 lg:w-2/3">
                         <Search className="absolute left-2.5 top-2 h-5 w-5 text-muted-foreground" />
                         <Input
-                            type="search"
+                            type="text"
                             placeholder="Search events..."
                             className="w-full py-3 px-4 pl-12 bg-white rounded-xl border-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all duration-200"
                             value={search}
@@ -79,21 +93,13 @@ export function ListEvents() {
                         />
                     </div>
                 </div>
-
                 <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">Upcoming Events</h1>
                             <p className="mt-2 text-gray-600">See My Events</p>
                         </div>
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button className="bg-indigo-500 hover:bg-indigo-600 w-56">
-                                    <PlusIcon className="w-3 h-3" /> New Event
-                                </Button>
-                            </SheetTrigger>
-                            <CreateEvents setEvents={setEvents} />
-                        </Sheet>
+                        <CreateEvents setEvents={setEvents} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

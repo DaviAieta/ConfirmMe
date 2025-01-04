@@ -1,4 +1,5 @@
 "use client"
+
 import React from "react"
 import { EventProps } from "@/app/events/types"
 import { CalendarDays, MapPin, Ticket } from "lucide-react"
@@ -10,7 +11,7 @@ import google from "../app/uploads/images/google.jpg"
 import Image from "next/image"
 
 export const EventCard = ({ event, isUpcoming }: { event: EventProps, isUpcoming: boolean }) => {
-    const imageUrl = meeting
+    const imageUrl = null
 
     return (
         <div className="p-6 relative">

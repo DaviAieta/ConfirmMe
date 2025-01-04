@@ -3,36 +3,54 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Calendar, CheckCircle, BarChart, Sparkles } from "lucide-react"
 import { ChartColumnDecreasing } from 'lucide-react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
 
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-900">
-      <header className="px-4 lg:px-6 h-14 flex items-center bg-indigo-900 text-white">
-        <Link className="flex items-center justify-center space-x-2" href="#">
-          <ChartColumnDecreasing className="h-6 w-6" />
-          <span className="ml-2 text-lg font-bold">ConfirmMe</span>
-        </Link>
-      </header>
+      <div className="bg-gradient-to-br from-indigo-400 via-indigo-600 to-indigo-900">
+        <header className="px-4 lg:px-6 h-14 flex items-center justify-between bg-indigo-900 text-white">
+          <Link className="flex items-center justify-center space-x-2" href="#">
+            <ChartColumnDecreasing className="h-6 w-6" />
+            <span className="ml-2 text-lg font-bold">ConfirmMe</span>
+          </Link>
+          <div>
+            <SignedIn>
+              <Link href="/events">
+                <Button className="bg-white text-indigo-900 hover:bg-indigo-100 border-2">Go to Dashboard</Button>
+              </Link>
+            </SignedIn>
+            <SignedOut>
+              <SignInButton>
+                <Button className="bg-white text-indigo-900 hover:bg-indigo-100">Login</Button>
+              </SignInButton>
+            </SignedOut>
+          </div>
+        </header>
+      </div>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-indigo-900 text-white">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                  Simplify Event Management
-                </h1>
-                <p className="mx-auto max-w-[700px] text-indigo-100 md:text-xl">
-                  Register events, track attendance, and create amazing invitations with AI. All in one place.
-                </p>
-              </div>
-              <div className="space-x-4">
-                <Button className="bg-white text-indigo-900 hover:bg-indigo-100">Get Started</Button>
-                <Button variant="outline" className="bg-indigo text-indigo ">Learn More</Button>
+        <div className="bg-gradient-to-br from-indigo-400 via-indigo-600 to-indigo-900">
+          <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-indigo-900 text-white">
+            <div className="container px-4 md:px-6">
+              <div className="flex flex-col items-center space-y-4 text-center">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+                    Simplify Event Management
+                  </h1>
+                  <p className="mx-auto max-w-[700px] text-indigo-100 md:text-xl">
+                    Register events, track attendance, and create amazing invitations with AI. All in one place.
+                  </p>
+                </div>
+                <div className="w-full max-w-sm space-y-2">
+                  <Link href="/auth/signup">
+                    <Button className="bg-white text-indigo-900 hover:bg-indigo-100 mt-5">Get Started</Button>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
         <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-slate-800">
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12 text-indigo-900 dark:text-indigo-100">
@@ -110,37 +128,11 @@ export default function LandingPage() {
                   Join thousands of organizers who are already using ConfirmMe to manage their events with ease.
                 </p>
               </div>
-              <div className="w-full max-w-sm space-y-2">
-                <form className="flex space-x-2">
-                  <Input className="max-w-lg flex-1 bg-white text-indigo-900" placeholder="Your best email" type="email" />
-                  <Button type="submit" className="bg-white text-indigo-900 hover:bg-indigo-100">Sign Up</Button>
-                </form>
-                <p className="text-xs text-indigo-200">
-                  By signing up, you agree to our{" "}
-                  <Link className="underline underline-offset-2" href="#">
-                    Terms of Service
-                  </Link>{" "}
-                  e{" "}
-                  <Link className="underline underline-offset-2" href="#">
-                    Privacy Policy
-                  </Link>
-                </p>
-              </div>
+
             </div>
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t border-indigo-200 bg-indigo-900 text-white">
-        <p className="text-xs text-indigo-200">© 2024 ConfirmMe.  All rights reserved.</p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Terms of Service
-          </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Privacy
-          </Link>
-        </nav>
-      </footer>
     </div>
   )
 }

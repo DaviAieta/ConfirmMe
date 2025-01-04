@@ -27,7 +27,8 @@ export class EventsController {
                     address: event.address,
                     peopleLimit: parseInt(event.people_limit, 10),
                     status: event.status,
-                    imagePath: event.imagePath
+                    imagePath: event.imagePath,
+                    categoriesId: event.categoriesId
                 }
             })
             return res.send(createdEvent)
@@ -55,7 +56,6 @@ export class EventsController {
             })
 
             if (isUpcoming && guests.length > 0) {
-                // Enviar e-mails para os convidados informando o cancelamento
                 for (const guest of guests) {
                     sendMail(
                         String(guest.email),

@@ -1,121 +1,101 @@
-"use client"
-
-import { InfoIcon } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Toggle } from "@/components/ui/toggle"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { ArrowLeft, Check } from 'lucide-react'
+import Link from 'next/link'
 
 export const Pricing = () => {
+    const plans = [
+        {
+            name: "Silver",
+            description: "For small events",
+            price: 15,
+            features: [
+                "Up to 50 attendees",
+                "Basic planning tools",
+                "Email support",
+                "1 event coordinator",
+            ],
+            popular: false,
+        },
+        {
+            name: "Gold",
+            description: "For medium events",
+            price: 25,
+            features: [
+                "Up to 200 attendees",
+                "Advanced planning tools",
+                "Priority support",
+                "2 event coordinators",
+                "Custom branding",
+            ],
+            popular: true,
+        },
+        {
+            name: "Diamond",
+            description: "For large events",
+            price: 40,
+            features: [
+                "Unlimited attendees",
+                "Premium tools & analytics",
+                "24/7 support",
+                "5 event coordinators",
+                "Custom integrations",
+                "On-site support",
+            ],
+            popular: false,
+        },
+    ]
+
     return (
-        <div className="min-h-screen bg-white p-4 md:p-8">
+        <div className="bg-white min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+            <Link href="/" className="absolute top-4 left-4 text-gray-600 hover:text-gray-900 transition-colors">
+                <ArrowLeft className="h-8 w-8" />
+                <span className="sr-only">Back to main page</span>
+            </Link>
             <div className="max-w-7xl mx-auto">
-                <div className="max-w-3xl mb-12">
-                    <h1 className="text-5xl font-bold mb-4">
-                        Boost Your Events
-                    </h1>
-                    <p className="text-xl text-gray-600 mb-8">
-                        Boost your ability to manage your events with ConfirmMe
+                <div className="text-center">
+                    <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+                        Simple, Transparent Pricing
+                    </h2>
+                    <p className="mt-3 text-xl text-gray-600">
+                        Choose the plan thats right for your events
                     </p>
                 </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                    <Card className="border-gray-200">
-                        <CardHeader>
-                            <h3 className="text-xl font-bold">Monthly</h3>
-
-                            <div className="mt-4">
-                                <span className="text-4xl font-bold">$39.90/</span>
-                                <span className="text-gray-600 ml-1">month</span>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <Button className="w-full" variant="outline">
-                                Choose Monthly
-                            </Button>
-                            <div className="space-y-4">
-                                <p className="font-semibold">Create plan includes:</p>
-                                <ul className="space-y-3">
-                                    {[
-                                        "Test",
-                                        "Test",
-                                        "Test",
-                                        "Test",
-                                        "Test"
-                                    ].map((feature) => (
-                                        <li key={feature} className="flex items-center gap-2">
-                                            <div className="h-2 w-2 bg-black rounded-full" />
-                                            <span className="flex-1">{feature}</span>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger>
-                                                        <InfoIcon className="h-4 w-4 text-gray-400" />
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        <p>Feature information</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
+                <div className="mt-8 grid grid-cols-1 gap-y-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+                    {plans.map((plan) => (
+                        <div key={plan.name} className="relative flex flex-col">
+                            <div className="flex-1 bg-gray-50 rounded-lg shadow-sm p-8 flex flex-col">
+                                <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
+                                <p className="mt-2 text-gray-500">{plan.description}</p>
+                                <p className="mt-8 text-5xl font-bold text-gray-900">${plan.price}</p>
+                                <p className="mt-2 text-gray-500">per month</p>
+                                <ul className="mt-8 space-y-4 flex-1">
+                                    {plan.features.map((feature) => (
+                                        <li key={feature} className="flex items-start">
+                                            <Check className="h-5 w-5 text-indigo-500 shrink-0" />
+                                            <span className="ml-3 text-gray-700">{feature}</span>
                                         </li>
                                     ))}
                                 </ul>
+                                <button
+                                    className={`mt-8 w-full py-3 px-4 rounded-md text-sm font-semibold transition-colors ${plan.popular
+                                        ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                        : 'bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-50'
+                                        }`}
+                                >
+                                    Get Started
+                                </button>
                             </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="border-purple-400 relative">
-                        <div className="absolute -top-3 right-4 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm">
-                            Recommended
+                            {plan.popular && (
+                                <div className="absolute top-0 right-0 bg-indigo-600 text-white px-3 py-1 text-sm font-semibold rounded-bl-lg rounded-tr-lg">
+                                    Most Popular
+                                </div>
+                            )}
                         </div>
-                        <CardHeader>
-                            <h3 className="text-xl font-bold">Annual</h3>
-                            <div className="mt-4">
-                                <span className="text-4xl font-bold">$478.80/</span>
-                                <span className="text-gray-600">year</span>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
-                                Choose Annual
-                            </Button>
-                            <div className="space-y-4">
-                                <p className="font-semibold">All Create features plus:</p>
-                                <ul className="space-y-3">
-                                    {[
-                                        "Test",
-                                        "Test",
-                                        "Test",
-                                        "Test",
-                                        "Test"
-                                    ].map((feature) => (
-                                        <li key={feature} className="flex items-center gap-2">
-                                            <div className="h-2 w-2 bg-purple-600 rounded-full" />
-                                            <span className="flex-1">{feature}</span>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger>
-                                                        <InfoIcon className="h-4 w-4 text-gray-400" />
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        <p>Feature information</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    ))}
                 </div>
             </div>
         </div>
     )
 }
+
+
+
