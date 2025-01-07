@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Footer } from "@/components/Footer";
 
@@ -29,7 +29,8 @@ export default function RootLayout({
     <ClerkProvider
       afterSignOutUrl="/auth/login"
       signInUrl="/auth/login"
-      signUpUrl="/auth/signup">
+      signUpUrl="/auth/signup"
+    >
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -38,8 +39,7 @@ export default function RootLayout({
           <Toaster />
           <Footer />
         </body>
-      </html >
+      </html>
     </ClerkProvider>
-
   );
 }

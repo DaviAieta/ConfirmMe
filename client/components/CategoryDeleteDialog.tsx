@@ -15,7 +15,7 @@ import {
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export const DeleteEventDialog = ({
+export const DeleteCategoryDialog = ({
   resolvedParams,
   title,
 }: {
@@ -25,22 +25,22 @@ export const DeleteEventDialog = ({
   const { toast } = useToast();
   const router = useRouter();
 
-  const handleDeleteEvent = async (e: any) => {
+  const handleDeleteCategory = async (e: any) => {
     e.preventDefault();
 
     try {
       const response = await fetchAdapter({
         method: "POST",
-        path: "events/delete",
+        path: "categories/delete",
         body: {
           uuid: resolvedParams.uuid,
         },
       });
       if (response.status == 200) {
         toast({
-          title: "Event deleted",
+          title: "Category deleted",
         });
-        router.push("/events");
+        router.push("/categories");
       }
     } catch {
       toast({
@@ -59,11 +59,9 @@ export const DeleteEventDialog = ({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[490px] h-[130px]">
         <DialogHeader>
-          <DialogTitle>
-            Are you sure you want to delete the {title} event?
-          </DialogTitle>
+          <DialogTitle>Are you sure you want to delete {title}?</DialogTitle>
         </DialogHeader>
-        <form className="space-y-4" onSubmit={handleDeleteEvent}>
+        <form className="space-y-4" onSubmit={handleDeleteCategory}>
           <DialogFooter>
             <DialogClose asChild>
               <Button className="w-full" type="button" variant="outline">

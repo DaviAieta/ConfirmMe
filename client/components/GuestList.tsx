@@ -1,116 +1,149 @@
-"use client"
-import { Card } from "@/components/ui/card"
-import { useEffect, useState } from "react"
-import { GuestProps } from "../app/events/guests/types"
-import { EventProps } from "../app/events/types"
-import { fetchAdapter } from "@/adapters/fetchAdapter"
-import { useToast } from "@/hooks/use-toast"
-import { format } from 'date-fns'
-import { enUS } from 'date-fns/locale'
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetTrigger } from "@/components/ui/sheet"
-import { PlusCircle } from "lucide-react"
-import { PreRegister } from "./PreRegisterDialog"
+import { useState, useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { fetchAdapter } from "@/adapters/fetchAdapter";
+import { Spinner } from "./Spinner";
+import { useToast } from "@/hooks/use-toast";
 
-export const ListGuests = ({ params }: { params: { uuid: string } }) => {
-    const [guests, setGuests] = useState<GuestProps[]>([])
-    const [event, setEvent] = useState<EventProps | null>(null)
-    const { toast } = useToast()
+interface Guest {
+  id: string;
+  uuid: string;
+  name: string;
+  email: string;
+}
 
-    const getEvent = async () => {
-        try {
-            const response = await fetchAdapter({
-                method: "GET",
-                path: `events/${params.uuid}`
-            })
-            if (response.status == 200 && response.data) {
-                setEvent(response.data)
-            } else {
-                toast({
-                    title: 'Event not found',
-                    description: 'The event you are looking for does not exist.'
-                })
-            }
-        } catch {
-            toast({
-                title: 'Error',
-                description: 'An error occurred while fetching the event.'
-            })
-        }
+interface GuestListProps {
+  eventUuid: string;
+}
+
+export function GuestList({ eventUuid }: GuestListProps) {
+  const [guests, setGuests] = useState<Guest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const testGuests: Guest[] = [
+    {
+      id: "1",
+      uuid: "uuid-1",
+      name: "John Doe",
+      email: "john.doe@example.com",
+    },
+    {
+      id: "2",
+      uuid: "uuid-2",
+      name: "Jane Smith",
+      email: "jane.smith@example.com",
+    },
+    {
+      id: "3",
+      uuid: "uuid-3",
+      name: "Carlos Silva",
+      email: "carlos.silva@example.com",
+    },
+    {
+      id: "4",
+      uuid: "uuid-4",
+      name: "Alice Brown",
+      email: "alice.brown@example.com",
+    },
+    {
+      id: "5",
+      uuid: "uuid-5",
+      name: "Maria Garcia",
+      email: "maria.garcia@example.com",
+    },
+    {
+      id: "6",
+      uuid: "uuid-6",
+      name: "Liam Johnson",
+      email: "liam.johnson@example.com",
+    },
+    {
+      id: "7",
+      uuid: "uuid-7",
+      name: "Sophia Martinez",
+      email: "sophia.martinez@example.com",
+    },
+    {
+      id: "8",
+      uuid: "uuid-8",
+      name: "Michael Brown",
+      email: "michael.brown@example.com",
+    },
+    {
+      id: "9",
+      uuid: "uuid-9",
+      name: "Emily Davis",
+      email: "emily.davis@example.com",
+    },
+    {
+      id: "10",
+      uuid: "uuid-10",
+      name: "Ethan Wilson",
+      email: "ethan.wilson@example.com",
+    },
+  ];
+
+  const getGuests = async () => {
+    try {
+      const response = await fetchAdapter({
+        method: "GET",
+        path: "guests/" + eventUuid,
+      });
+      if (response.status == 200) {
+        setGuests(response.data);
+      } else {
+        setGuests([]);
+      }
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Error",
+      });
+      setGuests([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const getGuests = async () => {
-        try {
-            const response = await fetchAdapter({
-                method: "GET",
-                path: `guests/${params.uuid}`
-            })
-            if (response.status == 200 && response.data) {
-                setGuests(response.data)
-            }
-        } catch {
-            toast({
-                title: 'Error',
-                description: 'An error occurred while fetching the guests.'
-            })
-        }
-    }
+  useEffect(() => {
+    getGuests();
+  }, []);
 
-    useEffect(() => {
-        getEvent()
-    }, [])
-    useEffect(() => {
-        getGuests()
-    }, [])
-
+  if (loading) {
     return (
-        <Card className="w-full max-w-4xl mx-auto my-8 p-8 bg-white shadow-lg">
-            <div className="flex justify-end">
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button className="bg-indigo-500 hover:bg-indigo-600 ml-auto">
-                            <PlusCircle className="w-5 h-5 mr-2" />
-                            Pre Register
-                        </Button>
-                    </SheetTrigger>
-                    <PreRegister params={params} />
-                </Sheet>
-            </div>
+      <div className="flex justify-center items-center h-[300px]">
+        <Spinner />
+      </div>
+    );
+  }
 
-            <div className="space-y-6">
-                <div className="text-center border-b pb-6">
-                    <h1 className="text-3xl font-bold mb-2">{event?.title}</h1>
-                    <p className="text-gray-600">{event?.dhStart
-                        ? format(new Date(event?.dhStart), "dd MMMM yyyy", { locale: enUS })
-                        : "Date not available"}</p>
-                    <p className="text-gray-600">{event?.address}</p>
-                </div>
-
+  return (
+    <div>
+      <ScrollArea className="h-[300px] w-full rounded-md border">
+        <div className="p-4">
+          {guests.length === 0 ? (
+            <p className="text-center text-muted-foreground">No guests yet</p>
+          ) : (
+            guests.map((guest) => (
+              <div key={guest.id} className="flex items-center space-x-4 py-2">
+                <Avatar>
+                  <AvatarFallback>
+                    {guest.name.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
-                    <h2 className="text-2xl font-semibold mb-4">Guest List</h2>
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-gray-100">
-                                <th className="py-2 px-4 text-left">Nome</th>
-                                <th className="py-2 px-4 text-left">Email</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {guests.filter((guest) => guest.confirmed).map((guest) => (
-                                <tr key={guest.id} className="border-b">
-                                    <td className="py-2 px-4">{guest.name}</td>
-                                    <td className="py-2 px-4">{guest.email}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                  <p className="text-sm font-medium leading-none">
+                    {guest.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">{guest.email}</p>
                 </div>
-
-                <div className="text-center text-sm text-gray-500 pt-6 border-t">
-                    <p>Total of guests: {guests.length}</p>
-                    <p>Document generated {format(new Date(), 'MM/dd/yyyy', { locale: enUS })}</p>
-                </div>
-            </div>
-        </Card>
-    )
+              </div>
+            ))
+          )}
+        </div>
+      </ScrollArea>
+    </div>
+  );
 }

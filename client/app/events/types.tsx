@@ -1,21 +1,23 @@
 export enum STATUS {
-    ACTIVE = "ACTIVE",
-    DONE = "DONE",
-    CANCELED = "CANCELED",
+  ACTIVE = "ACTIVE",
+  DONE = "DONE",
+  CANCELED = "CANCELED",
 }
 
 export type EventProps = {
-    id: number;
-    uuid: string;
-    title: string;
-    description: string;
-    dhStart: Date;
-    dhEnd: Date;
-    address: string;
-    peopleLimit: number;
-    status: STATUS;
-    image_path: string;
-    price: number;
-    confirmed: number;
-    declined: number;
+  id: number;
+  uuid: string;
+  title: string;
+  description: string;
+  dhStart: Date;
+  dhEnd: Date;
+  address: string;
+  peopleLimit: number;
+  status: STATUS;
+  image_path: string;
+  price: number;
+  confirmed: number;
+  declined: number;
+  link: string;
+  type: string;
 };

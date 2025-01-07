@@ -23,6 +23,11 @@ enum GENDER {
   WOMEN
 }
 
+enum TYPE {
+  ONLINE
+  INPERSON
+}
+
 model Users {
   id       Int      @id @default(autoincrement())
   name     String   @db.VarChar(255)
@@ -47,12 +52,14 @@ model Events {
   description String   @db.VarChar(255)
   dhStart     DateTime
   dhEnd       DateTime
-  address     String   @db.VarChar(255)
+  address     String?  @db.VarChar(255)
+  link        String?  @db.VarChar(255)
   peopleLimit Int
   status      STATUS
   confirmed   Int      @default(0)
   declined    Int      @default(0)
   imagePath   String?  @db.VarChar(255)
+  type        TYPE
 
   Guests Guests[]
 
@@ -68,8 +75,9 @@ model Guests {
   confirmed        Boolean? @default(false)
   declined         Boolean? @default(false)
   verificationCode String?
-  eventId          Int
-  event            Events   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  eventId Int
+  event   Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Categories {

@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -7,11 +6,20 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from "./ui/sheet";
-import { CategoryProps } from "@/app/categories/types";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import { Button } from "./ui/button";
+import { Pencil } from "lucide-react";
+import { use, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { fetchAdapter } from "@/adapters/fetchAdapter";
+import { EventProps } from "@/app/events/types";
+import { useRouter } from "next/navigation";
+import { CategoryProps } from "@/app/categories/types";
 import { ColorPicker } from "./ColorPicker";
 import {
   DialogContent,
@@ -23,41 +31,41 @@ import {
   DialogTrigger,
   DialogClose,
 } from "./ui/dialog";
-import { PlusIcon } from "lucide-react";
-import { fetchAdapter } from "@/adapters/fetchAdapter";
-import { useToast } from "@/hooks/use-toast";
 
-export type Event = {
-  setCategories: Dispatch<SetStateAction<CategoryProps[]>>;
-};
-
-export const CreateCategory = ({ setCategories }: Event) => {
-  const [name, setName] = useState("");
-  const [color, setColor] = useState("");
+export const EditCategory: React.FC<{
+  category: CategoryProps;
+  resolvedParams: { uuid: string };
+}> = ({ category, resolvedParams }) => {
+  const [name, setName] = useState(category.name);
+  const [color, setColor] = useState(category.color);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
-  const handleCreateCategory = async (e: any) => {
+  const handleEditCategory = async (e: any) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
       const response = await fetchAdapter({
-        method: "POST",
-        path: "categories/create",
+        method: "PUT",
+        path: "categories/update",
         body: {
           name,
           color,
+          uuid: resolvedParams.uuid,
         },
       });
       if (response.status == 200) {
         toast({
-          title: "Category registered successfully",
+          title: "Category edited successfully",
+          description: `Name: ${name}`,
         });
-        setCategories((prevCategories) => [...prevCategories, response.data]);
+        router.push("/categories");
       }
     } catch {
       toast({
+        variant: "destructive",
         title: `Error`,
       });
     } finally {
@@ -68,26 +76,25 @@ export const CreateCategory = ({ setCategories }: Event) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-indigo-500 hover:bg-indigo-600 w-56">
-          <PlusIcon className="w-3 h-3" /> New Category
+        <Button>
+          <Pencil className="w-3 h-3" />
         </Button>
       </DialogTrigger>
-
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Category</DialogTitle>
+          <DialogTitle>Edit Category</DialogTitle>
           <DialogDescription>
-            Fill in the fields to add a new category
+            Fill in the fields to edit the category
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleCreateCategory}>
+        <form onSubmit={handleEditCategory}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="title" className="text-right">
                 Name
               </Label>
               <Input
-                id="name"
+                id="title"
                 className="col-span-3"
                 value={name}
                 onChange={(e) => {
@@ -107,8 +114,13 @@ export const CreateCategory = ({ setCategories }: Event) => {
               <Button
                 type="submit"
                 className="bg-indigo-500 hover:bg-indigo-600"
+                disabled={submitting}
               >
-                Register
+                {submitting ? (
+                  <ReloadIcon className="animate-spin" />
+                ) : (
+                  "Confirm"
+                )}
               </Button>
             </DialogClose>
           </DialogFooter>

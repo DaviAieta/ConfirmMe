@@ -1,10 +1,9 @@
-import React from "react"
+import React from "react";
 
 export const Spinner = () => {
-    return (
-        <div className="flex justify-center items-center min-h-[200px]">
-            <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin">
-            </div>
-        </div>
-    )
-}
+  return (
+    <div className="flex justify-center items-center min-h-[200px]">
+      <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+};

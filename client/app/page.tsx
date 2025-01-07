@@ -1,10 +1,9 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Calendar, CheckCircle, BarChart, Sparkles } from "lucide-react"
-import { ChartColumnDecreasing } from 'lucide-react';
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs"
-
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Calendar, CheckCircle, BarChart, Sparkles } from "lucide-react";
+import { ChartColumnDecreasing } from "lucide-react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export default function LandingPage() {
   return (
@@ -18,12 +17,16 @@ export default function LandingPage() {
           <div>
             <SignedIn>
               <Link href="/events">
-                <Button className="bg-white text-indigo-900 hover:bg-indigo-100 border-2">Go to Dashboard</Button>
+                <Button className="bg-white text-indigo-900 hover:bg-indigo-100 border-2">
+                  Go to Dashboard
+                </Button>
               </Link>
             </SignedIn>
             <SignedOut>
               <SignInButton>
-                <Button className="bg-white text-indigo-900 hover:bg-indigo-100">Login</Button>
+                <Button className="bg-white text-indigo-900 hover:bg-indigo-100">
+                  Login
+                </Button>
               </SignInButton>
             </SignedOut>
           </div>
@@ -39,19 +42,25 @@ export default function LandingPage() {
                     Simplify Event Management
                   </h1>
                   <p className="mx-auto max-w-[700px] text-indigo-100 md:text-xl">
-                    Register events, track attendance, and create amazing invitations with AI. All in one place.
+                    Register events, track attendance, and create amazing
+                    invitations with AI. All in one place.
                   </p>
                 </div>
                 <div className="w-full max-w-sm space-y-2">
                   <Link href="/auth/signup">
-                    <Button className="bg-white text-indigo-900 hover:bg-indigo-100 mt-5">Get Started</Button>
+                    <Button className="bg-white text-indigo-900 hover:bg-indigo-100 mt-5">
+                      Get Started
+                    </Button>
                   </Link>
                 </div>
               </div>
             </div>
           </section>
         </div>
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-slate-800">
+        <section
+          id="features"
+          className="w-full py-12 md:py-24 lg:py-32 bg-white dark:bg-slate-800"
+        >
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12 text-indigo-900 dark:text-indigo-100">
               Key Features
@@ -59,29 +68,40 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="flex flex-col items-center text-center">
                 <Calendar className="h-12 w-12 mb-4 text-indigo-600" />
-                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">Event Registration</h3>
+                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">
+                  Event Registration
+                </h3>
                 <p className="text-slate-600 dark:text-slate-300">
                   Create and manage your events quickly and easily.
                 </p>
               </div>
               <div className="flex flex-col items-center text-center">
                 <BarChart className="h-12 w-12 mb-4 text-indigo-600" />
-                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">Attendance Statistics</h3>
+                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">
+                  Attendance Statistics
+                </h3>
                 <p className="text-slate-600 dark:text-slate-300">
-                  Track the percentage of confirmations and attendances in real-time.
+                  Track the percentage of confirmations and attendances in
+                  real-time.
                 </p>
               </div>
               <div className="flex flex-col items-center text-center">
                 <Sparkles className="h-12 w-12 mb-4 text-indigo-600" />
-                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">AI-Powered Invitations</h3>
+                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">
+                  AI-Powered Invitations
+                </h3>
                 <p className="text-slate-600 dark:text-slate-300">
-                  Create personalized and attractive invitations using artificial intelligence.
+                  Create personalized and attractive invitations using
+                  artificial intelligence.
                 </p>
               </div>
             </div>
           </div>
         </section>
-        <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-indigo-50 dark:bg-slate-900">
+        <section
+          id="how-it-works"
+          className="w-full py-12 md:py-24 lg:py-32 bg-indigo-50 dark:bg-slate-900"
+        >
           <div className="container px-4 md:px-6">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-12 text-indigo-900 dark:text-indigo-100">
               How It Works
@@ -91,7 +111,9 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mb-4">
                   1
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">Register Your Event</h3>
+                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">
+                  Register Your Event
+                </h3>
                 <p className="text-slate-600 dark:text-slate-300">
                   Enter your event details into the platform.
                 </p>
@@ -100,7 +122,9 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mb-4">
                   2
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">Send Invitations</h3>
+                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">
+                  Send Invitations
+                </h3>
                 <p className="text-slate-600 dark:text-slate-300">
                   Use our AI to create and send personalized invitations.
                 </p>
@@ -109,7 +133,9 @@ export default function LandingPage() {
                 <div className="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xl font-bold mb-4">
                   3
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">Track Statistics</h3>
+                <h3 className="text-xl font-bold mb-2 text-indigo-900 dark:text-indigo-100">
+                  Track Statistics
+                </h3>
                 <p className="text-slate-600 dark:text-slate-300">
                   View in real-time who has confirmed attendance and showed up.
                 </p>
@@ -125,14 +151,14 @@ export default function LandingPage() {
                   Ready to Simplify Your Events?
                 </h2>
                 <p className="mx-auto max-w-[600px] text-indigo-100 md:text-xl">
-                  Join thousands of organizers who are already using ConfirmMe to manage their events with ease.
+                  Join thousands of organizers who are already using ConfirmMe
+                  to manage their events with ease.
                 </p>
               </div>
-
             </div>
           </div>
         </section>
       </main>
     </div>
-  )
+  );
 }
