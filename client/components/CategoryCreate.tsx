@@ -1,13 +1,6 @@
+"use client";
+
 import { Dispatch, SetStateAction, useState } from "react";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "./ui/sheet";
 import { CategoryProps } from "@/app/categories/types";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -26,6 +19,7 @@ import {
 import { PlusIcon } from "lucide-react";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { useToast } from "@/hooks/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export type Event = {
   setCategories: Dispatch<SetStateAction<CategoryProps[]>>;
@@ -55,10 +49,18 @@ export const CreateCategory = ({ setCategories }: Event) => {
           title: "Category registered successfully",
         });
         setCategories((prevCategories) => [...prevCategories, response.data]);
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
-        title: `Error`,
+        variant: "destructive",
+        title: errorMessage,
       });
     } finally {
       setSubmitting(false);
@@ -107,8 +109,13 @@ export const CreateCategory = ({ setCategories }: Event) => {
               <Button
                 type="submit"
                 className="bg-indigo-500 hover:bg-indigo-600"
+                disabled={submitting}
               >
-                Register
+                {submitting ? (
+                  <ReloadIcon className="animate-spin" />
+                ) : (
+                  "Register"
+                )}
               </Button>
             </DialogClose>
           </DialogFooter>

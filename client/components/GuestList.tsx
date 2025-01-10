@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { Spinner } from "./Spinner";
@@ -21,69 +20,6 @@ export function GuestList({ eventUuid }: GuestListProps) {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-
-  const testGuests: Guest[] = [
-    {
-      id: "1",
-      uuid: "uuid-1",
-      name: "John Doe",
-      email: "john.doe@example.com",
-    },
-    {
-      id: "2",
-      uuid: "uuid-2",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-    },
-    {
-      id: "3",
-      uuid: "uuid-3",
-      name: "Carlos Silva",
-      email: "carlos.silva@example.com",
-    },
-    {
-      id: "4",
-      uuid: "uuid-4",
-      name: "Alice Brown",
-      email: "alice.brown@example.com",
-    },
-    {
-      id: "5",
-      uuid: "uuid-5",
-      name: "Maria Garcia",
-      email: "maria.garcia@example.com",
-    },
-    {
-      id: "6",
-      uuid: "uuid-6",
-      name: "Liam Johnson",
-      email: "liam.johnson@example.com",
-    },
-    {
-      id: "7",
-      uuid: "uuid-7",
-      name: "Sophia Martinez",
-      email: "sophia.martinez@example.com",
-    },
-    {
-      id: "8",
-      uuid: "uuid-8",
-      name: "Michael Brown",
-      email: "michael.brown@example.com",
-    },
-    {
-      id: "9",
-      uuid: "uuid-9",
-      name: "Emily Davis",
-      email: "emily.davis@example.com",
-    },
-    {
-      id: "10",
-      uuid: "uuid-10",
-      name: "Ethan Wilson",
-      email: "ethan.wilson@example.com",
-    },
-  ];
 
   const getGuests = async () => {
     try {

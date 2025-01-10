@@ -14,7 +14,7 @@ export class GuestsController {
       });
 
       if (!event) {
-        return res.status(404).json("Event not found");
+        return res.status(400).json("Event not found");
       }
 
       const guests = await prisma.guests.findMany({
@@ -36,7 +36,7 @@ export class GuestsController {
       });
 
       if (!event) {
-        return res.status(404).json("Event not found");
+        return res.status(400).json("Event not found");
       }
 
       const existingGuest = await prisma.guests.findUnique({
@@ -79,10 +79,10 @@ export class GuestsController {
       });
 
       if (!guest) {
-        return res.status(404).json("Guest not found");
+        return res.status(400).json("Email Not Found");
       }
 
-      const verificationCode = crypto.randomInt(100000, 999999).toString();
+      const verificationCode = crypto.randomInt(10000, 99999).toString();
 
       const createdVerificationCode = await prisma.guests.update({
         where: { email: email },
@@ -91,15 +91,11 @@ export class GuestsController {
         },
       });
 
-      sendMail(
-        String(guest.email),
-        "Confirm your attendance! 🎉",
-        "Your code: " + verificationCode + " ✔️"
-      );
+      await Notifications.sendCode(guest.name, email, verificationCode);
 
       return res.send(createdVerificationCode);
     } catch (error) {
-      res.status(500).json({ error: "Error to send the code" });
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
@@ -113,7 +109,7 @@ export class GuestsController {
       });
 
       if (code != guest?.verificationCode) {
-        return res.status(400).json({ error: "Invalid Code" });
+        return res.status(400).json("Invalid Code");
       }
 
       return res.send(guest);
@@ -127,9 +123,7 @@ export class GuestsController {
       const { email, phone, eventUuid } = req.body;
 
       if (!email || !eventUuid) {
-        return res
-          .status(400)
-          .json({ error: "Email and event UUID are required." });
+        return res.status(400).json("Email and event UUID are required.");
       }
 
       const event = await prisma.events.findUnique({
@@ -137,7 +131,7 @@ export class GuestsController {
       });
 
       if (!event) {
-        return res.status(404).json({ error: "Event not found." });
+        return res.status(400).json("Event not found.");
       }
 
       const existingGuest = await prisma.guests.findFirst({
@@ -145,9 +139,7 @@ export class GuestsController {
       });
 
       if (!existingGuest) {
-        return res
-          .status(404)
-          .json({ error: "Guest not registered for this event." });
+        return res.status(404).json("Guest not registered for this event.");
       }
 
       await prisma.guests.update({

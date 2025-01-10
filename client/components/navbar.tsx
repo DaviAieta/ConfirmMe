@@ -5,12 +5,10 @@ import {
   ChartColumnDecreasing,
   List,
   PartyPopper,
-  Sun,
-  Moon,
 } from "lucide-react";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { RestrictedPage } from "./Restricted";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { RestrictedPage } from "./RestrictedAccess";
 
 export const NavBar = ({ children }: { children: React.ReactNode }) => {
   return (

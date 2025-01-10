@@ -3,10 +3,10 @@ import { CategoriesController } from "../controller/categories.controller";
 
 const router = express.Router();
 
-router.get("/", CategoriesController.List);
-router.post("/create", CategoriesController.Create);
+router.get("/", CategoriesController.list);
+router.post("/create", CategoriesController.create);
 router.get("/:uuid", CategoriesController.findOne);
-router.post("/delete", CategoriesController.Delete);
-router.put("/update", CategoriesController.Update);
+router.post("/delete", CategoriesController.delete);
+router.put("/update", CategoriesController.update);
 
 export default router;

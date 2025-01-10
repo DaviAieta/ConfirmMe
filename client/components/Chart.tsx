@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -36,6 +38,19 @@ const AttendeesChart: React.FC<AttendeesChartProps> = ({
     plugins: {
       legend: {
         display: false,
+      },
+      datalabels: {
+        anchor: "end",
+        align: "top",
+        formatter: (value: number, context: any) => {
+          const total = confirmed + peopleLimit;
+          const percentage = ((value / total) * 100).toFixed(2);
+          return `${percentage}%`;
+        },
+        color: "#fff",
+        font: {
+          weight: "bold",
+        },
       },
     },
   };

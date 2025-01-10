@@ -1,15 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft, Plus, PlusIcon, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { CategoryCard } from "./CategoryCard";
 import { useEffect, useState } from "react";
 import { CategoryProps } from "@/app/categories/types";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "./ui/input";
-import { Sheet, SheetTrigger } from "./ui/sheet";
 import { CreateCategory } from "./CategoryCreate";
 import { Spinner } from "./Spinner";
 
@@ -33,15 +31,16 @@ export const ListCategories = () => {
         setCategories(categoriesWithCount);
       } else {
         toast({
-          variant: "destructive",
-          title: "Failed to load categories",
+          title: String(response.status),
+          description: response.data,
         });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "There was an issue fetching the categories.",
+        title: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -52,10 +51,11 @@ export const ListCategories = () => {
     getCategories();
   }, []);
 
-  const filteredCategory = categories.filter((category) =>
-    category.name.toLowerCase().includes(search.toLowerCase())
-  );
-
+  const filteredCategory = categories
+    .filter((category) =>
+      category.name.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
   if (loading) {
     return (
       <div className="min-h[400px] flex items-center justify-center">

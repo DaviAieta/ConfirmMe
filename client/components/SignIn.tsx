@@ -96,8 +96,8 @@ export const SignInPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="block w-full px-4 py-3 bg-indigo-50 border border-indigo-300 rounded-lg text-indigo-700 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                           transition duration-150 ease-in-out pl-11"
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                            transition duration-150 ease-in-out pl-11"
                 placeholder="your@email.com"
               />
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-500 w-5 h-5" />
@@ -118,8 +118,8 @@ export const SignInPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="block w-full px-4 py-3 bg-indigo-50 border border-indigo-300 rounded-lg text-indigo-700 text-sm
-                           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-                           transition duration-150 ease-in-out pl-11"
+                            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+                            transition duration-150 ease-in-out pl-11"
                 placeholder="••••••••"
               />
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-indigo-500 w-5 h-5" />

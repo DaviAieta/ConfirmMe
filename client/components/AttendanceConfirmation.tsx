@@ -65,14 +65,21 @@ export const ConfirmAttendance = ({
       if (response.status == 200) {
         toast({
           title: "code sent",
-          description: "Verify your SMS.",
+          description: "Verify your e-mail.",
         });
         setCodeSent(true);
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
-        title: "Error",
-        description: "Failed to send code.",
+        variant: "destructive",
+        title: errorMessage,
       });
     } finally {
       setIsSendingCode(false);
@@ -260,8 +267,8 @@ export const ConfirmAttendance = ({
                           value={verificationCode}
                           onChange={(e) => setVerificationCode(e.target.value)}
                           className="w-full"
-                          placeholder="Enter 6-digit code"
-                          maxLength={6}
+                          placeholder="Enter 5-digit code"
+                          maxLength={5}
                         />
                       </div>
                       <Button type="submit" className="w-full">

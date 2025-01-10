@@ -1,11 +1,8 @@
 "use client";
 
 import { CategoryProps } from "@/app/categories/types";
-import { Calendar, Users } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { useEffect, useState } from "react";
-import { fetchAdapter } from "@/adapters/fetchAdapter";
-import { useToast } from "@/hooks/use-toast";
 
 export const CategoryCard = ({
   category,

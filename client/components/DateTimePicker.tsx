@@ -22,14 +22,27 @@ import { useEffect, useState } from "react";
 
 type DateTimePickerProps = {
   onChange: (value: string) => void;
+  initialValue?: string;
 };
 
-export function DateTimePicker({ onChange }: DateTimePickerProps) {
-  const [date, setDate] = useState<Date>();
-  const [selectedHour, setSelectedHour] = useState("12");
-  const [selectedMinute, setSelectedMinute] = useState("00");
+export function DateTimePicker({
+  onChange,
+  initialValue,
+}: DateTimePickerProps) {
+  const [date, setDate] = useState<Date | undefined>(
+    initialValue ? new Date(initialValue) : undefined
+  );
+  const [selectedHour, setSelectedHour] = useState(
+    initialValue
+      ? new Date(initialValue).getHours().toString().padStart(2, "0")
+      : "12"
+  );
+  const [selectedMinute, setSelectedMinute] = useState(
+    initialValue
+      ? new Date(initialValue).getMinutes().toString().padStart(2, "0")
+      : "00"
+  );
 
-  // Atualiza o valor combinado ao mudar qualquer parte (data, hora ou minuto)
   useEffect(() => {
     if (date) {
       const dateTimeString = `${

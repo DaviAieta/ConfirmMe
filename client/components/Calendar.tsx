@@ -1,16 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { formatDate } from "@fullcalendar/core";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { EventProps } from "@/app/events/types";
+import { formatISO } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 export const Calendar: React.FC = () => {
   const [events, setEvents] = useState<EventProps[]>([]);
+  const { toast } = useToast();
 
   const getEvents = async () => {
     try {
@@ -20,13 +22,19 @@ export const Calendar: React.FC = () => {
       });
       if (response.status == 200) {
         setEvents(response.data);
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
-      console.log("error");
-      // toast({
-      //     title: 'Error'
-      // })
-      // setLoading(false);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
+      toast({
+        variant: "destructive",
+        title: errorMessage,
+      });
     }
   };
   useEffect(() => {
@@ -36,8 +44,8 @@ export const Calendar: React.FC = () => {
   const formattedEvents = events.map((event) => ({
     id: event.id,
     title: event.title,
-    start: event.dhStart?.split("T")[0], // Apenas a data, sem hora
-    end: event.dhEnd?.split("T")[0], // Apenas a data, sem hora
+    start: formatISO(new Date(event.dhStart)),
+    end: formatISO(new Date(event.dhEnd)),
   }));
 
   return (
@@ -63,11 +71,13 @@ export const Calendar: React.FC = () => {
                   {event.title}
                   <br />
                   <label className="text-slate-950">
-                    {formatDate(event.dhStart!, {
+                    {new Date(event.dhStart).toLocaleString("en-US", {
+                      timeZone: "UTC",
                       month: "long",
                       day: "2-digit",
                       hour: "2-digit",
-                    })}{" "}
+                      minute: "2-digit",
+                    })}
                   </label>
                 </li>
               ))}
@@ -85,7 +95,8 @@ export const Calendar: React.FC = () => {
                 ? JSON.parse(localStorage.getItem("events") || "[]")
                 : []
             }
-            events={formattedEvents} // Passando os eventos formatados sem hora
+            timeZone="UTC"
+            events={formattedEvents}
           />
         </div>
       </div>

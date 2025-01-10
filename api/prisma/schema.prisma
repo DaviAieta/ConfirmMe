@@ -13,30 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ADMIN {
-  Y
-  N
-}
-
-enum GENDER {
-  MEN
-  WOMEN
-}
-
 enum TYPE {
   ONLINE
   INPERSON
 }
 
 model Users {
-  id       Int      @id @default(autoincrement())
-  name     String   @db.VarChar(255)
-  email    String   @db.VarChar(255)
-  password String   @db.VarChar(255)
-  phone    Int
-  admin    ADMIN
-  gender   GENDER
-  birth    DateTime
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(255)
+  email    String @db.VarChar(255)
+  password String @db.VarChar(255)
+  token    String @unique
+
+  Events Events[]
 }
 
 enum STATUS {
@@ -52,6 +41,7 @@ model Events {
   description String   @db.VarChar(255)
   dhStart     DateTime
   dhEnd       DateTime
+  zipCode     String?  @db.VarChar(255)
   address     String?  @db.VarChar(255)
   link        String?  @db.VarChar(255)
   peopleLimit Int
@@ -65,6 +55,9 @@ model Events {
 
   Categories   Categories @relation(fields: [categoriesId], references: [id])
   categoriesId Int
+
+  User    Users? @relation(fields: [usersId], references: [id])
+  usersId Int?
 }
 
 model Guests {

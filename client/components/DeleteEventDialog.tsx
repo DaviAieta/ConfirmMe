@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const DeleteEventDialog = ({
   resolvedParams,
@@ -24,9 +26,11 @@ export const DeleteEventDialog = ({
 }) => {
   const { toast } = useToast();
   const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
 
   const handleDeleteEvent = async (e: any) => {
     e.preventDefault();
+    setSubmitting(true);
 
     try {
       const response = await fetchAdapter({
@@ -41,12 +45,21 @@ export const DeleteEventDialog = ({
           title: "Event deleted",
         });
         router.push("/events");
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
+        title: errorMessage,
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -70,8 +83,13 @@ export const DeleteEventDialog = ({
                 No
               </Button>
             </DialogClose>
-            <Button className="w-full" type="submit" variant="destructive">
-              Yes
+            <Button
+              type="submit"
+              className="w-full"
+              variant="destructive"
+              disabled={submitting}
+            >
+              {submitting ? <ReloadIcon className="animate-spin" /> : "Yes"}
             </Button>
           </DialogFooter>
         </form>

@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetTrigger } from "@/components/ui/sheet";
-import { CreateEvents } from "./EventCreate";
+import { Search } from "lucide-react";
+import { CreateEvents } from "./CreateEvent";
 import { EventProps } from "../app/events/types";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { useToast } from "@/hooks/use-toast";
@@ -12,7 +10,6 @@ import { Spinner } from "./Spinner";
 import { Input } from "./ui/input";
 import Link from "next/link";
 import { EventCard } from "./EventCard";
-import { Dialog, DialogTrigger } from "./ui/dialog";
 
 export function ListEvents() {
   const [events, setEvents] = useState<EventProps[]>([]);
@@ -30,15 +27,16 @@ export function ListEvents() {
         setEvents(response.data);
       } else {
         toast({
-          variant: "destructive",
-          title: "Failed to load events",
+          title: String(response.status),
+          description: response.data,
         });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "There was an issue fetching the events.",
+        title: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -53,12 +51,12 @@ export function ListEvents() {
     event.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const currentDate = new Date();
+  const currentDateUTC = new Date(Date.now());
   const upcomingEvents = filteredEvent.filter(
-    (event) => new Date(event.dhStart) >= currentDate
+    (event) => new Date(event.dhStart).getTime() >= currentDateUTC.getTime()
   );
   const pastEvents = filteredEvent.filter(
-    (event) => new Date(event.dhStart) < currentDate
+    (event) => new Date(event.dhStart).getTime() < currentDateUTC.getTime()
   );
 
   if (loading) {

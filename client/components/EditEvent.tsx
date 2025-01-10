@@ -1,21 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { EventProps } from "../app/events/types";
-import { fetchAdapter } from "@/adapters/fetchAdapter";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import {
   Dialog,
   DialogFooter,
@@ -26,64 +10,51 @@ import {
   DialogTrigger,
   DialogContent,
 } from "./ui/dialog";
-import { PlusIcon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Button } from "./ui/button";
+import { Pencil, PlusIcon } from "lucide-react";
+import { use, useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { fetchAdapter } from "@/adapters/fetchAdapter";
+import { EventProps } from "@/app/events/types";
+import { useRouter } from "next/navigation";
 import { CategoryProps } from "@/app/categories/types";
 import { DateTimePicker } from "./DateTimePicker";
 
-export type Event = {
-  setEvents: Dispatch<SetStateAction<EventProps[]>>;
-};
-
-export const CreateEvents = ({ setEvents }: Event) => {
+export const EditEvent: React.FC<{
+  event: EventProps;
+  resolvedParams: { uuid: string };
+}> = ({ event, resolvedParams }) => {
   const [categories, setCategories] = useState<CategoryProps[]>([]);
-  const [category, setCategory] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [dhStart, setDhStart] = useState("");
-  const [dhEnd, setDhEnd] = useState("");
-  const [address, setAddress] = useState("");
-  const [link, setLink] = useState("");
-  const [peopleLimit, setPeopleLimit] = useState("");
-  const [type, setType] = useState<"ONLINE" | "INPERSON" | "">(""); // Estado para armazenar o tipo de evento
+  const [category, setCategory] = useState(event.categoriesId || "");
+  const [title, setTitle] = useState(event.title || "");
+  const [description, setDescription] = useState(event.description || "");
+  const [dhStart, setDhStart] = useState(
+    event.dhStart ? new Date(event.dhStart).toISOString().slice(0, 16) : ""
+  );
+  const [dhEnd, setDhEnd] = useState(
+    event.dhEnd ? new Date(event.dhEnd).toISOString().slice(0, 16) : ""
+  );
+  const [zipCode, setZipCode] = useState(event.zipCode || "");
+  const [address, setAddress] = useState(event.address || "");
+  const [link, setLink] = useState(event.link || "");
+  const [peopleLimit, setPeopleLimit] = useState(event.peopleLimit || "");
+  const [type, setType] = useState<"ONLINE" | "INPERSON" | "">(
+    event.type === "ONLINE" || event.type === "INPERSON" ? event.type : ""
+  );
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
-
-  const handleCreatedEvent = async (e: any) => {
-    e.preventDefault();
-    setSubmitting(true);
-
-    try {
-      const response = await fetchAdapter({
-        method: "POST",
-        path: "events/create",
-        body: {
-          title,
-          description,
-          dhStart,
-          dhEnd,
-          type,
-          address,
-          link,
-          people_limit: peopleLimit,
-          status: "ACTIVATE",
-          categoriesId: Number(category),
-        },
-      });
-      if (response.status == 200) {
-        toast({
-          title: "Event registered successfully",
-          description: `Event: ${title}`,
-        });
-        setEvents((prevEvents) => [...prevEvents, response.data]);
-      }
-    } catch {
-      toast({
-        title: `Error`,
-      });
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const router = useRouter();
 
   const getCategories = async () => {
     try {
@@ -95,15 +66,16 @@ export const CreateEvents = ({ setEvents }: Event) => {
         setCategories(response.data);
       } else {
         toast({
-          variant: "destructive",
-          title: "Failed to load categories",
+          title: String(response.status),
+          description: response.data,
         });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "There was an issue fetching the categories.",
+        title: errorMessage,
       });
     }
   };
@@ -111,11 +83,59 @@ export const CreateEvents = ({ setEvents }: Event) => {
   useEffect(() => {
     getCategories();
   }, []);
+
+  const handleEditEvent = async (e: any) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const response = await fetchAdapter({
+        method: "PUT",
+        path: "events/update",
+        body: {
+          category,
+          title,
+          description,
+          dhStart,
+          dhEnd,
+          zipCode,
+          address,
+          link,
+          people_limit: peopleLimit,
+          status: "ACTIVATE",
+          type,
+          uuid: resolvedParams.uuid,
+        },
+      });
+      if (response.status == 200) {
+        toast({
+          title: "Event registered successfully",
+          description: `Event: ${title}`,
+        });
+        router.push("/events");
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
+      }
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
+      toast({
+        variant: "destructive",
+        title: errorMessage,
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-indigo-500 hover:bg-indigo-600 w-56">
-          <PlusIcon className="w-3 h-3" /> New Event
+        <Button>
+          <Pencil className="w-3 h-3" />
         </Button>
       </DialogTrigger>
 
@@ -126,14 +146,17 @@ export const CreateEvents = ({ setEvents }: Event) => {
             Fill in the fields to add a new event
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleCreatedEvent}>
+        <form onSubmit={handleEditEvent}>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="title" className="text-right">
                 Category
               </Label>
               <div className="col-span-3 flex items-center gap-2">
-                <Select onValueChange={setCategory}>
+                <Select
+                  value={category.toString()}
+                  onValueChange={(value) => setCategory(parseInt(value, 10))}
+                >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -180,6 +203,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 Type
               </Label>
               <Select
+                value={type}
                 onValueChange={(value) =>
                   setType(value as "ONLINE" | "INPERSON")
                 }
@@ -213,13 +237,29 @@ export const CreateEvents = ({ setEvents }: Event) => {
               <Label htmlFor="dhStart" className="text-right">
                 Start
               </Label>
-              <DateTimePicker onChange={setDhStart} />
+              <DateTimePicker onChange={setDhStart} initialValue={dhStart} />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="dhEnd" className="text-right">
                 Finish
               </Label>
-              <DateTimePicker onChange={setDhEnd} />
+              <DateTimePicker onChange={setDhEnd} initialValue={dhEnd} />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="zipCode" className="text-right">
+                Zip Code
+              </Label>
+              <Input
+                id="zipCode"
+                className={`col-span-3 ${
+                  type === "ONLINE" ? "bg-gray-100 cursor-not-allowed" : ""
+                }`}
+                value={zipCode}
+                onChange={(e) => {
+                  setZipCode(e.target.value);
+                }}
+                maxLength={5}
+              />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="address" className="text-right">

@@ -18,18 +18,17 @@ type ColorPickerProps = {
 
 export function ColorPicker({ value, onChange }: ColorPickerProps) {
   const colorMap: Record<string, string> = {
-    "#F44336": "Red",
-    "#E91E63": "Pink",
-    "#9C27B0": "Purple",
-    "#3F51B5": "Indigo",
-    "#2196F3": "Blue",
-    "#00BCD4": "Cyan",
-    "#009688": "Teal",
-    "#4CAF50": "Green",
-    "#FFEB3B": "Yellow",
-    "#FF9800": "Orange",
-    "#795548": "Brown",
-    "#607D8B": "Blue Grey",
+    "#FF5733": "Vivid Red",
+    "#FF8D1A": "Sunset Orange",
+    "#4CAF50": "Vibrant Green",
+    "#2196F3": "Bright Blue",
+    "#9C27B0": "Electric Purple",
+    "#00BCD4": "Bright Cyan",
+    "#FF4081": "Hot Pink",
+    "#3F51B5": "Indigo Blue",
+    "#FFC107": "Amber",
+    "#FF5722": "Burnt Orange",
+    "#00C853": "Lime Green",
   };
 
   const presetColors = Object.keys(colorMap);
@@ -76,15 +75,6 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
                 </span>
               </Button>
             ))}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="custom-color">Custom color</Label>
-            <Input
-              id="custom-color"
-              placeholder="#000000"
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-            />
           </div>
         </div>
       </PopoverContent>

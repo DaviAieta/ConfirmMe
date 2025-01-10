@@ -4,13 +4,20 @@ export enum STATUS {
   CANCELED = "CANCELED",
 }
 
+export enum TYPE {
+  ONLINE = "ONLINE",
+  INPERSON = "INPERSON",
+}
+
 export type EventProps = {
   id: number;
   uuid: string;
+  categoriesId: number;
   title: string;
   description: string;
   dhStart: Date;
   dhEnd: Date;
+  zipCode: string;
   address: string;
   peopleLimit: number;
   status: STATUS;

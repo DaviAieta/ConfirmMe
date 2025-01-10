@@ -1,31 +1,59 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { Notifications } from "../services/notificationService";
+import { Validator } from "../validators/validator";
 
 export class EventsController {
   static async list(req: Request, res: Response) {
     try {
       const events = await prisma.events.findMany({});
-      if (!events) {
-        return res.status(404).json("Not found");
-      }
-      return res.send(events);
-    } catch (error) {
-      console.log(error);
 
-      return res.status(400).json(error);
+      return res.send(events);
+    } catch {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
   static async create(req: Request, res: Response) {
     try {
       const event = req.body;
+
+      const validationResult = Validator.dataEvent(event);
+
+      if (!validationResult.success) {
+        const errorMessages = validationResult.error.errors
+          .map((err: any) => err.message)
+          .join(", ");
+
+        return res.status(400).json(errorMessages);
+      }
+
+      const overlappingEvent = await prisma.events.findFirst({
+        where: {
+          zipCode: event.zipCode,
+          address: event.address,
+          dhStart: {
+            lt: new Date(event.dhEnd),
+          },
+          dhEnd: {
+            gt: new Date(event.dhStart),
+          },
+        },
+      });
+
+      if (overlappingEvent) {
+        return res
+          .status(400)
+          .json("An event already exists at this location and time.");
+      }
+
       const createdEvent = await prisma.events.create({
         data: {
           title: event.title,
           description: event.description,
           dhStart: new Date(event.dhStart + "z"),
           dhEnd: new Date(event.dhEnd + "z"),
+          zipCode: event.zipCode,
           address: event.address,
           link: event.link,
           peopleLimit: parseInt(event.people_limit, 10),
@@ -35,9 +63,10 @@ export class EventsController {
           type: event.type,
         },
       });
+
       return res.send(createdEvent);
-    } catch (error) {
-      return res.status(400).json({ error });
+    } catch {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
@@ -50,7 +79,7 @@ export class EventsController {
       });
 
       if (!event) {
-        return res.status(404).json({ error: "Event not found" });
+        return res.status(400).json("Event Not Found");
       }
 
       const isUpcoming = new Date(event.dhStart) > new Date();
@@ -58,6 +87,10 @@ export class EventsController {
       const guests = await prisma.guests.findMany({
         where: { eventId: event.id },
       });
+
+      if (!guests) {
+        return res.status(400).json("Guests Not Found");
+      }
 
       if (isUpcoming && guests.length > 0) {
         const validGuests = guests
@@ -79,8 +112,8 @@ export class EventsController {
       });
 
       return res.send(deletedEvent);
-    } catch (error) {
-      return res.status(400).json({ error });
+    } catch {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
@@ -91,12 +124,12 @@ export class EventsController {
         where: { uuid },
       });
       if (!event) {
-        return res.status(404).json("event not found");
+        return res.status(404).json("Event Not Found");
       }
 
       return res.send(event);
-    } catch (error) {
-      return res.status(400).json("Error");
+    } catch {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
@@ -109,20 +142,22 @@ export class EventsController {
           uuid: event.uuid,
         },
         data: {
+          categoriesId: event.category,
           title: event.title,
           description: event.description,
           dhStart: new Date(event.dhStart + "z"),
           dhEnd: new Date(event.dhEnd + "z"),
+          zipCode: event.zipCode,
           address: event.address,
+          link: event.link,
           peopleLimit: parseInt(event.people_limit, 10),
-          status: event.status,
-          imagePath: event.imagePath,
+          type: event.type,
         },
       });
 
       return res.send(updatedEvent);
     } catch (error) {
-      return res.status(400).json({ error });
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 }

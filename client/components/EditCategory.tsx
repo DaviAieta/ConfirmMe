@@ -1,13 +1,4 @@
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+"use client";
 
 import { Button } from "./ui/button";
 import { Pencil } from "lucide-react";
@@ -62,11 +53,18 @@ export const EditCategory: React.FC<{
           description: `Name: ${name}`,
         });
         router.push("/categories");
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: `Error`,
+        title: errorMessage,
       });
     } finally {
       setSubmitting(false);
@@ -76,7 +74,7 @@ export const EditCategory: React.FC<{
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button variant={"secondary"}>
           <Pencil className="w-3 h-3" />
         </Button>
       </DialogTrigger>

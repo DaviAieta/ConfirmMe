@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const DeleteCategoryDialog = ({
   resolvedParams,
@@ -24,9 +26,11 @@ export const DeleteCategoryDialog = ({
 }) => {
   const { toast } = useToast();
   const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
 
   const handleDeleteCategory = async (e: any) => {
     e.preventDefault();
+    setSubmitting(true);
 
     try {
       const response = await fetchAdapter({
@@ -41,19 +45,28 @@ export const DeleteCategoryDialog = ({
           title: "Category deleted",
         });
         router.push("/categories");
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
+        title: errorMessage,
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <Button variant={"secondary"}>
           <Trash2 className="h-3 w-3" />
         </Button>
       </DialogTrigger>
@@ -68,8 +81,13 @@ export const DeleteCategoryDialog = ({
                 No
               </Button>
             </DialogClose>
-            <Button className="w-full" type="submit" variant="destructive">
-              Yes
+            <Button
+              type="submit"
+              className="w-full"
+              variant="destructive"
+              disabled={submitting}
+            >
+              {submitting ? <ReloadIcon className="animate-spin" /> : "Yes"}
             </Button>
           </DialogFooter>
         </form>

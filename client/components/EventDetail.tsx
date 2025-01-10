@@ -4,17 +4,8 @@ import {
   CalendarIcon,
   MapPinIcon,
   TicketIcon,
-  InfoIcon,
-  ImageIcon,
   MapPin,
-  Pencil,
-  Delete,
-  Link,
-  Trash2,
-  Dot,
-  Ellipsis,
-  EllipsisVertical,
-  EllipsisVerticalIcon,
+  Link2,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImagePlaceholder } from "./ImagePlaceholder";
@@ -27,16 +18,17 @@ import { format } from "date-fns";
 import { enUS } from "date-fns/locale";
 import AttendeesChart from "./Chart";
 import { Button } from "./ui/button";
-import { PreRegisterGuestDialog } from "./PreRegisterDialog";
+import { PreRegisterGuestDialog } from "./PreRegistrationDialog";
 import { DeleteEventDialog } from "./DeleteEventDialog";
 import dinner from "../app/uploads/images/dinner.webp";
 import meeting from "../app/uploads/images/meeting.webp";
 import google from "../app/uploads/images/google.jpg";
-import { EditEvent } from "./EventEdit";
+import { EditEvent } from "./EditEvent";
 import { Spinner } from "./Spinner";
 import { use } from "react";
 import { GuestList } from "./GuestList";
 import { GuestProps } from "@/app/events/guests/types";
+import Link from "next/link";
 
 export const EventDetails = ({
   params,
@@ -45,11 +37,10 @@ export const EventDetails = ({
 }) => {
   const resolvedParams = use(params);
   const [event, setEvent] = useState<EventProps | null>(null);
-  const [guests, setGuests] = useState<GuestProps[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const imageUrl = dinner;
+  const imageUrl = null;
 
   const getEvent = async () => {
     try {
@@ -59,11 +50,18 @@ export const EventDetails = ({
       });
       if (response.status == 200) {
         setEvent(response.data);
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
+        title: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -98,6 +96,17 @@ export const EventDetails = ({
       </div>
     );
   }
+
+  if (!event) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <h2 className="text-2xl font-bold mb-4">Event not found</h2>
+        <Link href="/events" className="text-blue-500 hover:underline">
+          Comeback to events
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-background">
       <div className="relative h-[300px] w-full">
@@ -129,7 +138,7 @@ export const EventDetails = ({
               <div className="flex gap-4">
                 <PreRegisterGuestDialog params={resolvedParams} />
                 <Button onClick={() => handleCopyLink(String(event?.uuid))}>
-                  <Link className="h-4 w-4" />
+                  <Link2 className="h-4 w-4" />
                 </Button>
                 <DeleteEventDialog
                   resolvedParams={resolvedParams}
@@ -147,9 +156,15 @@ export const EventDetails = ({
                   <p className="text-sm font-medium">Date</p>
                   <p className="text-sm text-muted-foreground">
                     {event?.dhStart
-                      ? format(new Date(event.dhStart), "dd/MM/yyyy", {
-                          locale: enUS,
-                        })
+                      ? new Intl.DateTimeFormat("en-US", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                          timeZone: "UTC",
+                        }).format(new Date(event.dhStart))
                       : "Unavailable Date"}
                   </p>
                 </div>
@@ -167,7 +182,9 @@ export const EventDetails = ({
                       {event?.link}
                     </a>
                   ) : (
-                    <p className="text-muted-foreground">{event?.address}</p>
+                    <p className="text-muted-foreground">
+                      {event?.address} {event?.zipCode}
+                    </p>
                   )}
                 </div>
               </div>
@@ -198,7 +215,22 @@ export const EventDetails = ({
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4" />
-                    {event?.address}
+                    <div>
+                      {event?.type === "ONLINE" ? (
+                        <a
+                          href={event?.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-indigo-500 underline"
+                        >
+                          {event?.link}
+                        </a>
+                      ) : (
+                        <p className="text-muted-foreground">
+                          {event?.address}
+                        </p>
+                      )}
+                    </div>{" "}
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <CalendarIcon className="h-4 w-4" />

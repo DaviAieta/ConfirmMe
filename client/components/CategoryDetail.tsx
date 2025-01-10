@@ -1,15 +1,14 @@
 "use client";
+
 import { CategoryProps } from "@/app/categories/types";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { useToast } from "@/hooks/use-toast";
-import { Edit, List, Trash } from "lucide-react";
-import { Button } from "./ui/button";
 import { use } from "react";
-import { DeleteCategoryDialog } from "./CategoryDeleteDialog";
-import { EditCategory } from "./CategoryEdit";
+import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
+import { EditCategory } from "./EditCategory";
 
 export const CategoryDetails = ({
   params,
@@ -32,11 +31,18 @@ export const CategoryDetails = ({
           eventCount: response.data._count?.Events || 0,
         };
         setCategory(categoryData);
+      } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
+        title: errorMessage,
       });
     }
   };
@@ -49,7 +55,6 @@ export const CategoryDetails = ({
     return (
       <div className="container mx-auto px-4 py-8 text-center">
         <h2 className="text-2xl font-bold mb-4">Category not found</h2>
-        <p className="mb-4">Oops, the requested category could not be found.</p>
         <Link href="/categories" className="text-blue-500 hover:underline">
           Comeback to categories
         </Link>

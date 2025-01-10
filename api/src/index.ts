@@ -16,5 +16,5 @@ app.use("/guests", guestRoutes);
 app.use("/categories", categoriesRoutes);
 
 app.listen(port, () => {
-  console.log("Servidor rodando: http://localhost:5555");
+  console.log(`Server is running on http://localhost:${port}`);
 });

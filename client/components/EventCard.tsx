@@ -3,11 +3,6 @@
 import React from "react";
 import { EventProps } from "@/app/events/types";
 import { CalendarDays, MapPin, Ticket } from "lucide-react";
-import { format } from "date-fns";
-import { enUS } from "date-fns/locale";
-import dinner from "../app/uploads/images/dinner.webp";
-import meeting from "../app/uploads/images/meeting.webp";
-import google from "../app/uploads/images/google.jpg";
 import Image from "next/image";
 
 export const EventCard = ({
@@ -17,7 +12,7 @@ export const EventCard = ({
   event: EventProps;
   isUpcoming: boolean;
 }) => {
-  const imageUrl = dinner;
+  const imageUrl = null;
 
   return (
     <div className="p-6 relative">
@@ -54,13 +49,23 @@ export const EventCard = ({
           {event.type === "ONLINE" ? (
             <span>{event.link}</span>
           ) : (
-            <span>{event.address}</span>
+            <span>
+              {event.address} {event.zipCode}
+            </span>
           )}
         </div>
         <div className="flex items-center text-gray-600">
           <CalendarDays className="w-4 h-4 mr-2" />
           <span>
-            {format(new Date(event.dhStart), "MM/dd/yyyy", { locale: enUS })}
+            {new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+              timeZone: "UTC",
+            }).format(new Date(event.dhStart))}
           </span>
         </div>
         <div className="flex items-center text-gray-600">
@@ -69,9 +74,6 @@ export const EventCard = ({
             {event.confirmed} / {event.peopleLimit} confirmed
           </span>
         </div>
-        <p className="mt-4 text-gray-600 text-sm line-clamp-2">
-          {event.description}
-        </p>
       </div>
     </div>
   );

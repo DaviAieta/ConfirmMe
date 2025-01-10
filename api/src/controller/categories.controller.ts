@@ -1,8 +1,16 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
+import { Prisma } from "@prisma/client";
+import { z } from "zod";
+
+const categorySchema = z.object({
+  name: z.string().min(1, "Name is required "),
+  color: z.string().min(1, "Color is required "),
+  uuid: z.string().optional(),
+});
 
 export class CategoriesController {
-  static async List(req: Request, res: Response) {
+  static async list(req: Request, res: Response) {
     try {
       const categories = await prisma.categories.findMany({
         include: {
@@ -12,28 +20,33 @@ export class CategoriesController {
         },
       });
 
-      if (!categories) {
-        return res.status(400).json("Categories not found");
-      }
-
       return res.send(categories);
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        return res.status(400).json("Internal Error.");
+      }
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
-  static async Create(req: Request, res: Response) {
+  static async create(req: Request, res: Response) {
     try {
-      const category = req.body;
+      const category = categorySchema.parse(req.body);
+
       const createdCategory = await prisma.categories.create({
         data: {
           name: category.name,
           color: category.color,
         },
       });
+
       return res.send(createdCategory);
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof z.ZodError) {
+        const errorMessages = error.errors.map((err) => err.message);
+        return res.status(400).json(errorMessages);
+      }
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
@@ -55,40 +68,52 @@ export class CategoriesController {
       });
 
       if (!category) {
-        return res.status(404).json("category not found");
+        return res.status(400).json("Category Not Found");
       }
 
       return res.send(category);
-    } catch (error) {
-      return res.status(400).json("Error");
+    } catch {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
-  static async Delete(req: Request, res: Response) {
+  static async delete(req: Request, res: Response) {
     try {
       const { uuid } = req.body;
-
       const category = await prisma.categories.findUnique({
         where: { uuid },
+        include: {
+          _count: {
+            select: { Events: true },
+          },
+        },
       });
 
       if (!category) {
-        return res.status(400).json("Category not found");
+        return res.status(400).json("Category Not Found");
+      }
+
+      if (category._count.Events > 0) {
+        return res
+          .status(400)
+          .json("Cannot delete category with linked events.");
       }
 
       const deletedCategory = await prisma.categories.delete({
-        where: category,
+        where: {
+          id: category.id,
+        },
       });
 
       return res.send(deletedCategory);
-    } catch {
-      return res.status(400).json("error");
+    } catch (error) {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
-  static async Update(req: Request, res: Response) {
+  static async update(req: Request, res: Response) {
     try {
-      const category = req.body;
+      const category = categorySchema.parse(req.body);
 
       const updatedEvent = await prisma.categories.update({
         where: {
@@ -102,7 +127,11 @@ export class CategoriesController {
 
       return res.send(updatedEvent);
     } catch (error) {
-      return res.status(400).json({ error });
+      if (error instanceof z.ZodError) {
+        const validationErrors = error.errors.map((err) => err.message);
+        return res.status(400).json(validationErrors);
+      }
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 }

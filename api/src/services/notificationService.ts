@@ -6,7 +6,9 @@ export class Notifications {
     eventTitle: string,
     eventDate: Date
   ) {
-    const eventDateFormatted = eventDate.toLocaleString();
+    const eventDateFormatted = eventDate.toLocaleString("en-US", {
+      timeZone: "UTC",
+    });
 
     for (const guest of guests) {
       await sendMail(
@@ -34,7 +36,9 @@ export class Notifications {
     link: string,
     eventDate: Date
   ) {
-    const eventDateFormatted = eventDate.toLocaleString();
+    const eventDateFormatted = eventDate.toLocaleString("en-US", {
+      timeZone: "UTC",
+    });
 
     await sendMail(
       String(email),
@@ -49,6 +53,18 @@ export class Notifications {
         We look forward to seeing you there and sharing an amazing experience together!
        </p>
        <p>Link for confirmation: ${link}</p>
+       <p><em>Best regards,</em><br>The ConfirmMe Team</p>`
+    );
+  }
+
+  static async sendCode(name: string, email: string, code: string) {
+    await sendMail(
+      String(email),
+      `🎉 Confirm Your Presence!`,
+      `<h1>Dear ${name},</h1>
+       <p>To confirm your participation, please use the following code:</p>
+       <h1>${code}</h1>
+       <p>Please enter this code on the event page to confirm your presence.</p>
        <p><em>Best regards,</em><br>The ConfirmMe Team</p>`
     );
   }
