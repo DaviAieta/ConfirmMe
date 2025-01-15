@@ -58,7 +58,11 @@ export class CategoriesController {
         include: {
           Events: {
             include: {
-              Guests: true,
+              EventGuest: {
+                include: {
+                  guest: true,
+                },
+              },
             },
           },
           _count: {

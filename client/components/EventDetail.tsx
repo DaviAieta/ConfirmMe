@@ -204,46 +204,12 @@ export const EventDetails = ({
           </div>
           <div className="lg:col-span-1">
             <Card>
-              <CardContent className="p-6">
-                <div className="aspect-video relative mb-3 rounded-lg overflow-hidden">
+              <CardContent className="p-6 flex flex-col items-center">
+                <div className="flex justify-center items-center w-full h-[250px]">
                   <AttendeesChart
                     confirmed={Number(event?.confirmed)}
                     peopleLimit={Number(event?.peopleLimit)}
                   />
-                </div>
-                <h3 className="font-semibold mb-2">{event?.title}</h3>
-                <div className="mt-4 space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    <div>
-                      {event?.type === "ONLINE" ? (
-                        <a
-                          href={event?.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-indigo-500 underline"
-                        >
-                          {event?.link}
-                        </a>
-                      ) : (
-                        <p className="text-muted-foreground">
-                          {event?.address}
-                        </p>
-                      )}
-                    </div>{" "}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <CalendarIcon className="h-4 w-4" />
-                    {event?.dhStart
-                      ? format(new Date(event.dhStart), "dd/MM/yyyy", {
-                          locale: enUS,
-                        })
-                      : " Unavailable Date"}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <TicketIcon className="h-4 w-4" />
-                    {event?.confirmed} / {event?.peopleLimit} confirmed
-                  </div>
                 </div>
               </CardContent>
             </Card>

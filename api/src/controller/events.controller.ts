@@ -33,10 +33,10 @@ export class EventsController {
           zipCode: event.zipCode,
           address: event.address,
           dhStart: {
-            lt: new Date(event.dhEnd),
+            lt: new Date(event.dhEnd + "Z"),
           },
           dhEnd: {
-            gt: new Date(event.dhStart),
+            gt: new Date(event.dhStart + "Z"),
           },
         },
       });
@@ -84,12 +84,25 @@ export class EventsController {
 
       const isUpcoming = new Date(event.dhStart) > new Date();
 
-      const guests = await prisma.guests.findMany({
+      const eventGuests = await prisma.eventGuest.findMany({
         where: { eventId: event.id },
+        include: { guest: true },
       });
 
-      if (!guests) {
-        return res.status(400).json("Guests Not Found");
+      const guests = eventGuests.map((eventGuest) => eventGuest.guest);
+
+      if (guests.length > 0) {
+        const guestIds = guests.map((guest) => guest.id);
+
+        await prisma.$transaction([
+          prisma.guests.deleteMany({
+            where: {
+              id: {
+                in: guestIds,
+              },
+            },
+          }),
+        ]);
       }
 
       if (isUpcoming && guests.length > 0) {

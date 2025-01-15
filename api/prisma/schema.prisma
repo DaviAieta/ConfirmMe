@@ -18,6 +18,12 @@ enum TYPE {
   INPERSON
 }
 
+enum STATUS {
+  ACTIVATE
+  DONE
+  CANCELED
+}
+
 model Users {
   id       Int    @id @default(autoincrement())
   name     String @db.VarChar(255)
@@ -28,10 +34,17 @@ model Users {
   Events Events[]
 }
 
-enum STATUS {
-  ACTIVATE
-  DONE
-  CANCELED
+model EventGuest {
+  id        Int     @id @default(autoincrement())
+  eventId   Int
+  guestId   Int
+  confirmed Boolean @default(false)
+  declined  Boolean @default(false)
+
+  event Events @relation(fields: [eventId], references: [id])
+  guest Guests @relation(fields: [guestId], references: [id])
+
+  @@unique([eventId, guestId]) // Garante que um convidado não possa ser duplicado no mesmo evento
 }
 
 model Events {
@@ -51,26 +64,23 @@ model Events {
   imagePath   String?  @db.VarChar(255)
   type        TYPE
 
-  Guests Guests[]
-
   Categories   Categories @relation(fields: [categoriesId], references: [id])
   categoriesId Int
 
   User    Users? @relation(fields: [usersId], references: [id])
   usersId Int?
+
+  EventGuest EventGuest[]
 }
 
 model Guests {
-  id               Int      @id @default(autoincrement())
-  name             String   @db.VarChar(255)
-  email            String?  @unique @db.VarChar(255)
-  phone            String?  @db.VarChar(20)
-  confirmed        Boolean? @default(false)
-  declined         Boolean? @default(false)
+  id               Int     @id @default(autoincrement())
+  name             String  @db.VarChar(255)
+  email            String? @unique @db.VarChar(255)
+  phone            String? @db.VarChar(20)
   verificationCode String?
 
-  eventId Int
-  event   Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  EventGuest EventGuest[]
 }
 
 model Categories {

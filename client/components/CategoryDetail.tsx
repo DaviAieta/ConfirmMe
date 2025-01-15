@@ -104,7 +104,7 @@ export const CategoryDetails = ({
                     <div key={event.id} className="border p-4 rounded-lg">
                       <h2 className="font-bold">{event.title}</h2>
                       <p className="text-sm text-muted-foreground">
-                        {event.Guests.length} Guest(s)
+                        {event.EventGuest.length} Guest(s)
                       </p>
                     </div>
                   ))}

@@ -16,15 +16,10 @@ export const NavBar = ({ children }: { children: React.ReactNode }) => {
       <SignedIn>
         <nav className="sticky top-0 flex flex-col bg-white shadow-xl p-5 border-100 border-gray-200 rounded-2xl">
           <div className="flex-row container mx-auto flex items-center justify-center">
-            <Link
-              className="flex items-center justify-center space-x-2"
-              href="#"
-            >
-              <ChartColumnDecreasing className="h-6 w-6 text-indigo-600" />
-              <span className="text-xl font-bold text-gray-700 hover:text-indigo-600 ">
-                ConfirmMe
-              </span>
-            </Link>
+            <ChartColumnDecreasing className="h-6 w-6 text-indigo-600" />
+            <span className="text-xl font-bold text-gray-700">
+              TheConfirmMe
+            </span>
             <div className="flex-1 flex justify-center">
               <div className="flex items-center space-x-6">
                 <a

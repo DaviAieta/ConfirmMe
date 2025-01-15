@@ -44,7 +44,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
   const [zipCode, setZipCode] = useState("");
   const [link, setLink] = useState("");
   const [peopleLimit, setPeopleLimit] = useState("");
-  const [type, setType] = useState<"ONLINE" | "INPERSON" | "">(""); // Estado para armazenar o tipo de evento
+  const [type, setType] = useState<"ONLINE" | "INPERSON" | "">("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();

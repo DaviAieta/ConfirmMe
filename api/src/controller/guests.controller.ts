@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import crypto from "crypto";
-import { sendMail } from "../services/verificationService";
 import { Notifications } from "../services/notificationService";
 
 export class GuestsController {
@@ -16,14 +15,64 @@ export class GuestsController {
       if (!event) {
         return res.status(400).json("Event not found");
       }
-
-      const guests = await prisma.guests.findMany({
-        where: { eventId: event.id },
+      const guests = await prisma.eventGuest.findMany({
+        where: {
+          eventId: event.id,
+        },
+        include: {
+          guest: true,
+        },
       });
 
       return res.send(guests);
     } catch (error) {
       return res.status(400).json({ error });
+    }
+  }
+
+  static async bulkPreRegister(req: Request, res: Response) {
+    try {
+      const { uuid, guests } = req.body;
+
+      if (!guests || guests.length === 0) {
+        return res.status(400).json("No guests data found.");
+      }
+
+      const event = await prisma.events.findUnique({
+        where: { uuid },
+      });
+
+      if (!event) {
+        return res.status(400).json("Event not found.");
+      }
+
+      const createdGuests = await Promise.all(
+        guests.map(async (guest: any) => {
+          let newGuest = await prisma.guests.upsert({
+            where: { email: guest.email },
+            update: {},
+            create: {
+              name: guest.name,
+              email: guest.email,
+            },
+          });
+
+          await prisma.eventGuest.create({
+            data: {
+              eventId: event.id,
+              guestId: newGuest.id,
+              confirmed: false,
+              declined: false,
+            },
+          });
+
+          return newGuest;
+        })
+      );
+
+      res.send(createdGuests);
+    } catch (error) {
+      return res.status(400).json("An unexpected error occurred.");
     }
   }
 
@@ -39,19 +88,41 @@ export class GuestsController {
         return res.status(400).json("Event not found");
       }
 
-      const existingGuest = await prisma.guests.findUnique({
+      if (event.confirmed >= event.peopleLimit) {
+        return res.status(400).json("Guest limit exceeded");
+      }
+
+      let guest = await prisma.guests.findUnique({
         where: { email },
       });
 
-      if (existingGuest) {
-        return res.status(400).json("Guest with this email already exists");
+      if (!guest) {
+        guest = await prisma.guests.create({
+          data: {
+            name,
+            email,
+          },
+        });
       }
 
-      const createdPreRegister = await prisma.guests.create({
+      const existingRelation = await prisma.eventGuest.findUnique({
+        where: {
+          eventId_guestId: {
+            eventId: event.id,
+            guestId: guest.id,
+          },
+        },
+      });
+
+      if (existingRelation) {
+        return res.status(400).json("Guest already registered for this event");
+      }
+
+      const createdGuest = await prisma.eventGuest.create({
         data: {
-          name: name,
-          email: email,
-          eventId: event?.id,
+          eventId: event.id,
+          guestId: guest.id,
+          confirmed: false,
         },
       });
 
@@ -64,7 +135,7 @@ export class GuestsController {
         event.dhStart
       );
 
-      return res.send(createdPreRegister);
+      return res.send(createdGuest);
     } catch (error) {
       return res.status(400).json("An unexpected error occurred.");
     }
@@ -103,7 +174,6 @@ export class GuestsController {
     try {
       const { code } = req.body;
 
-      // Comparar o codigo com o codigo do banco de dados
       const guest = await prisma.guests.findFirst({
         where: { verificationCode: code },
       });
@@ -134,20 +204,41 @@ export class GuestsController {
         return res.status(400).json("Event not found.");
       }
 
-      const existingGuest = await prisma.guests.findFirst({
-        where: { email, eventId: event.id },
+      if (event.confirmed >= event.peopleLimit) {
+        return res.status(400).json("Guest limit exceeded");
+      }
+
+      const guest = await prisma.guests.findUnique({
+        where: { email },
       });
 
-      if (!existingGuest) {
+      if (!guest) {
+        return res.status(404).json("Guest not found.");
+      }
+
+      const eventGuest = await prisma.eventGuest.findUnique({
+        where: {
+          eventId_guestId: {
+            eventId: event.id,
+            guestId: guest.id,
+          },
+        },
+      });
+
+      if (!eventGuest) {
         return res.status(404).json("Guest not registered for this event.");
       }
 
-      await prisma.guests.update({
-        where: { id: existingGuest.id },
+      await prisma.eventGuest.update({
+        where: {
+          eventId_guestId: {
+            eventId: event.id,
+            guestId: guest.id,
+          },
+        },
         data: {
           confirmed: true,
           declined: false,
-          phone: phone || existingGuest.phone,
         },
       });
 

@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Spinner } from "./Spinner";
+import { OpenCsv } from "./OpenCsv";
 
 export const PreRegisterGuestDialog = ({
   params,
@@ -110,6 +111,8 @@ export const PreRegisterGuestDialog = ({
             </Button>
           </DialogFooter>
         </form>
+
+        <OpenCsv uuid={params.uuid} />
       </DialogContent>
     </Dialog>
   );

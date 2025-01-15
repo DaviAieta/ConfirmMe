@@ -1,10 +1,10 @@
-import { NavBar } from "@/components/Navbar"
-import { ListGuests } from "../../../../components/GuestList"
+import { NavBar } from "@/components/Navbar";
+import { ListGuests } from "../../../../components/GuestList";
 
 export default function Page({ params }: { params: { uuid: string } }) {
-    return (
-        <NavBar >
-            <ListGuests params={params} />
-        </NavBar>
-    )
+  return (
+    <NavBar>
+      <ListGuests params={params} />
+    </NavBar>
+  );
 }
