@@ -34,7 +34,6 @@ export default function RootLayout({
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-          style={{ zoom: "1.1" }} // Define o zoom de 110%
         >
           {children}
           <Toaster />

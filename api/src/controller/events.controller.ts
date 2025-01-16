@@ -92,17 +92,11 @@ export class EventsController {
       const guests = eventGuests.map((eventGuest) => eventGuest.guest);
 
       if (guests.length > 0) {
-        const guestIds = guests.map((guest) => guest.id);
-
-        await prisma.$transaction([
-          prisma.guests.deleteMany({
-            where: {
-              id: {
-                in: guestIds,
-              },
-            },
-          }),
-        ]);
+        await prisma.eventGuest.deleteMany({
+          where: {
+            eventId: event.id,
+          },
+        });
       }
 
       if (isUpcoming && guests.length > 0) {
@@ -125,7 +119,8 @@ export class EventsController {
       });
 
       return res.send(deletedEvent);
-    } catch {
+    } catch (error) {
+      console.log(error);
       return res.status(400).json("An unexpected error occurred.");
     }
   }

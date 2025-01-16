@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  CalendarIcon,
-  MapPinIcon,
-  TicketIcon,
-  MapPin,
-  Link2,
-} from "lucide-react";
+import { CalendarIcon, MapPinIcon, TicketIcon, Link2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ImagePlaceholder } from "./ImagePlaceholder";
 import Image from "next/image";
@@ -14,20 +8,14 @@ import { EventProps } from "@/app/events/types";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { enUS } from "date-fns/locale";
 import AttendeesChart from "./Chart";
 import { Button } from "./ui/button";
 import { PreRegisterGuestDialog } from "./PreRegistrationDialog";
 import { DeleteEventDialog } from "./DeleteEventDialog";
-import dinner from "../app/uploads/images/dinner.webp";
-import meeting from "../app/uploads/images/meeting.webp";
-import google from "../app/uploads/images/google.jpg";
 import { EditEvent } from "./EditEvent";
 import { Spinner } from "./Spinner";
 import { use } from "react";
 import { GuestList } from "./GuestList";
-import { GuestProps } from "@/app/events/guests/types";
 import Link from "next/link";
 
 export const EventDetails = ({
@@ -205,7 +193,7 @@ export const EventDetails = ({
           <div className="lg:col-span-1">
             <Card>
               <CardContent className="p-6 flex flex-col items-center">
-                <div className="flex justify-center items-center w-full h-[250px]">
+                <div className="flex justify-center items-center w-full h-full">
                   <AttendeesChart
                     confirmed={Number(event?.confirmed)}
                     peopleLimit={Number(event?.peopleLimit)}

@@ -10,6 +10,7 @@ import { Spinner } from "./Spinner";
 import { Input } from "./ui/input";
 import Link from "next/link";
 import { EventCard } from "./EventCard";
+import { list } from "postcss";
 
 export function ListEvents() {
   const [events, setEvents] = useState<EventProps[]>([]);

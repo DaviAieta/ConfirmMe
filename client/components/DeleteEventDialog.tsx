@@ -31,7 +31,7 @@ export const DeleteEventDialog = ({
   const handleDeleteEvent = async (e: any) => {
     e.preventDefault();
     setSubmitting(true);
-
+    console.log(resolvedParams.uuid);
     try {
       const response = await fetchAdapter({
         method: "POST",
@@ -40,6 +40,7 @@ export const DeleteEventDialog = ({
           uuid: resolvedParams.uuid,
         },
       });
+      console.log(response);
       if (response.status == 200) {
         toast({
           title: "Event deleted",
