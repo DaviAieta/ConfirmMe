@@ -60,6 +60,7 @@ export const ConfirmAttendance = ({
         path: "guests/send-code",
         body: {
           email,
+          eventUuid: resolvedParams.uuid,
         },
       });
       if (response.status == 200) {

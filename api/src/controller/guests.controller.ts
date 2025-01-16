@@ -143,7 +143,15 @@ export class GuestsController {
 
   static async sendCode(req: Request, res: Response) {
     try {
-      const { email } = req.body;
+      const { email, eventUuid } = req.body;
+
+      const event = await prisma.events.findUnique({
+        where: { uuid: eventUuid },
+      });
+
+      if (!event) {
+        return res.status(400).json("Event not found.");
+      }
 
       const guest = await prisma.guests.findFirst({
         where: { email: email },
@@ -151,6 +159,19 @@ export class GuestsController {
 
       if (!guest) {
         return res.status(400).json("Email Not Found");
+      }
+
+      const eventGuest = await prisma.eventGuest.findUnique({
+        where: {
+          eventId_guestId: {
+            eventId: event.id,
+            guestId: guest.id,
+          },
+        },
+      });
+
+      if (!eventGuest) {
+        return res.status(400).json("Guest not registered for this event.");
       }
 
       const verificationCode = crypto.randomInt(10000, 99999).toString();
@@ -177,6 +198,10 @@ export class GuestsController {
       const guest = await prisma.guests.findFirst({
         where: { verificationCode: code },
       });
+
+      if (!guest) {
+        return res.status(400).json("Invalid Code");
+      }
 
       if (code != guest?.verificationCode) {
         return res.status(400).json("Invalid Code");

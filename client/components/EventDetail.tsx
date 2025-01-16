@@ -17,6 +17,7 @@ import { Spinner } from "./Spinner";
 import { use } from "react";
 import { GuestList } from "./GuestList";
 import Link from "next/link";
+import confirmmeimage from "../app/uploads/images/confirmmeimage.webp";
 
 export const EventDetails = ({
   params,

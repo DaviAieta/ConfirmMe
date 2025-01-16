@@ -14,7 +14,7 @@ export const NavBar = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <SignedIn>
-        <nav className="sticky top-0 flex flex-col bg-white shadow-xl p-5 border-100 border-gray-200 rounded-2xl">
+        <nav className="sticky top-0 z-50 flex flex-col bg-white shadow-xl p-5 border-gray-200 rounded-2xl">
           <div className="flex-row container mx-auto flex items-center justify-center">
             <ChartColumnDecreasing className="h-6 w-6 text-indigo-600" />
             <span className="text-xl font-bold text-gray-700">

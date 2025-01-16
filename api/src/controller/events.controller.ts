@@ -17,6 +17,7 @@ export class EventsController {
   static async create(req: Request, res: Response) {
     try {
       const event = req.body;
+      console.log(event.dhEnd);
 
       const validationResult = Validator.dataEvent(event);
 
@@ -28,16 +29,15 @@ export class EventsController {
         return res.status(400).json(errorMessages);
       }
 
+      // Not working
+      const dhStart = new Date(event.dhStart + "Z");
+      const dhEnd = new Date(event.dhEnd + "Z");
+
       const overlappingEvent = await prisma.events.findFirst({
         where: {
           zipCode: event.zipCode,
           address: event.address,
-          dhStart: {
-            lt: new Date(event.dhEnd + "Z"),
-          },
-          dhEnd: {
-            gt: new Date(event.dhStart + "Z"),
-          },
+          AND: [{ dhStart: { lt: dhEnd } }, { dhEnd: { gt: dhStart } }],
         },
       });
 
