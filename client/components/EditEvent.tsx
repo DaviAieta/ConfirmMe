@@ -139,25 +139,28 @@ export const EditEvent: React.FC<{
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="w-full sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] max-h-screen flex flex-col">
         <DialogHeader>
           <DialogTitle>Create Event</DialogTitle>
           <DialogDescription>
             Fill in the fields to add a new event
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleEditEvent}>
+        <form
+          onSubmit={handleEditEvent}
+          className="space-y-4 flex-grow overflow-auto"
+        >
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="category" className="sm:text-right">
                 Category
               </Label>
-              <div className="col-span-3 flex items-center gap-2">
+              <div className="sm:col-span-3 flex flex-col sm:flex-row items-start sm:items-center gap-2">
                 <Select
                   value={category.toString()}
                   onValueChange={(value) => setCategory(parseInt(value, 10))}
                 >
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -174,7 +177,7 @@ export const EditEvent: React.FC<{
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <p className="mt-2 text-sm text-gray-500">
+                <p className="text-sm text-gray-500">
                   Don't have a category? <br />
                   <a
                     href="/categories"
@@ -185,21 +188,21 @@ export const EditEvent: React.FC<{
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="sm:text-right">
                 Title
               </Label>
               <Input
                 id="title"
-                className="col-span-3"
+                className="sm:col-span-3"
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
                 }}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="type" className="sm:text-right">
                 Type
               </Label>
               <Select
@@ -220,33 +223,33 @@ export const EditEvent: React.FC<{
               </Select>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="sm:text-right">
                 Description
               </Label>
               <Input
                 id="description"
-                className="col-span-3"
+                className="sm:col-span-3"
                 value={description}
                 onChange={(e) => {
                   setDescription(e.target.value);
                 }}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="dhStart" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="dhStart" className="sm:text-right">
                 Start
               </Label>
               <DateTimePicker onChange={setDhStart} initialValue={dhStart} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="dhEnd" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="dhEnd" className="sm:text-right">
                 Finish
               </Label>
               <DateTimePicker onChange={setDhEnd} initialValue={dhEnd} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="zipCode" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="zipCode" className="sm:text-right">
                 Zip Code
               </Label>
               <Input
@@ -261,8 +264,8 @@ export const EditEvent: React.FC<{
                 maxLength={5}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="address" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="address" className="sm:text-right">
                 Address
               </Label>
               <Input
@@ -275,8 +278,8 @@ export const EditEvent: React.FC<{
                 disabled={type === "ONLINE"}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="link" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="link" className="sm:text-right">
                 Link
               </Label>
               <Input
@@ -289,8 +292,8 @@ export const EditEvent: React.FC<{
                 disabled={type === "INPERSON"}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="peopleLimit" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="peopleLimit" className="sm:text-right">
                 People Limit
               </Label>
               <Input
@@ -307,7 +310,7 @@ export const EditEvent: React.FC<{
             <DialogClose asChild>
               <Button
                 type="submit"
-                className="bg-indigo-500 hover:bg-indigo-600"
+                className="bg-indigo-500 hover:bg-indigo-600 w-full sm:w-auto"
                 disabled={submitting}
               >
                 {submitting ? (

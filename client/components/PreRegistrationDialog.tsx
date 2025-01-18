@@ -69,16 +69,19 @@ export const PreRegisterGuestDialog = ({
       <DialogTrigger asChild>
         <Button variant={"outline"}>Pre-Register Your Guest</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full h-full sm:h-auto sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] flex flex-col">
         <DialogHeader>
           <DialogTitle>Pre-Register</DialogTitle>
           <DialogDescription>
             Pre-register your guest by filling in the fields below
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handlePreRegister}>
+        <form
+          onSubmit={handlePreRegister}
+          className="space-y-4 flex-grow overflow-auto"
+        >
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="sm:col-span-3 flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <Label htmlFor="name" className="text-right">
                 Name
               </Label>
@@ -90,7 +93,7 @@ export const PreRegisterGuestDialog = ({
                 }}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="sm:col-span-3 flex flex-col sm:flex-row items-start sm:items-center gap-2">
               <Label className="text-right">E-mail</Label>
               <Input
                 id="email"
@@ -105,9 +108,9 @@ export const PreRegisterGuestDialog = ({
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex justify-end mt-4">
             <Button type="submit" disabled={loading}>
-              {loading ? <Spinner /> : "Send Pre-Register"}{" "}
+              {loading ? <Spinner /> : "Send Pre-Register"}
             </Button>
           </DialogFooter>
         </form>

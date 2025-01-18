@@ -1,8 +1,5 @@
-import { SignUpPage } from "@/components/SignUp"
-import { SignUp } from "@clerk/nextjs"
+import { SignUpPage } from "@/components/SignUp";
 
 export default function Signup() {
-    return (
-        <SignUpPage />
-    )
+  return <SignUpPage />;
 }

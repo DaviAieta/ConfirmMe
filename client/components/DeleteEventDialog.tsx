@@ -71,7 +71,7 @@ export const DeleteEventDialog = ({
           <Trash2 className="h-3 w-3" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[490px] h-[130px]">
+      <DialogContent className="sm:max-w-[490px] sm:max-h-[200x]">
         <DialogHeader>
           <DialogTitle>
             Are you sure you want to delete the {title} event?

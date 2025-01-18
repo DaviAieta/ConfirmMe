@@ -5,6 +5,7 @@ import { useSignUp } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Rocket, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { fetchAdapter } from "@/adapters/fetchAdapter";
 
 export const SignUpPage = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -35,6 +36,19 @@ export const SignUpPage = () => {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
 
+        const userId = result.createdUserId;
+        console.log(userId);
+
+        const response = await fetchAdapter({
+          method: "POST",
+          path: "users/create",
+          body: { userId, email, password },
+        });
+        if (response.status === 200) {
+          router.push("/events");
+        } else {
+          setError("Signup failed. Please try again.");
+        }
         router.push("/events");
       } else {
         console.error("Signup failed", result);

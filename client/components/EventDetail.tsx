@@ -17,7 +17,6 @@ import { Spinner } from "./Spinner";
 import { use } from "react";
 import { GuestList } from "./GuestList";
 import Link from "next/link";
-import confirmmeimage from "../app/uploads/images/confirmmeimage.webp";
 
 export const EventDetails = ({
   params,
@@ -80,7 +79,7 @@ export const EventDetails = ({
 
   if (loading) {
     return (
-      <div className="min-h[400px] flex items-center justify-center">
+      <div className="min-h-[400px] flex items-center justify-center">
         <Spinner />
       </div>
     );
@@ -91,17 +90,18 @@ export const EventDetails = ({
       <div className="container mx-auto px-4 py-8 text-center">
         <h2 className="text-2xl font-bold mb-4">Event not found</h2>
         <Link href="/events" className="text-blue-500 hover:underline">
-          Comeback to events
+          Return to events
         </Link>
       </div>
     );
   }
+
   return (
     <div className="min-h-screen bg-background">
-      <div className="relative h-[300px] w-full">
+      <div className="relative h-[200px] sm:h-[250px] md:h-[300px] w-full">
         {imageUrl ? (
           <Image
-            src={imageUrl}
+            src={imageUrl || "/placeholder.svg"}
             alt="Event hero image"
             className="object-cover brightness-75"
             fill
@@ -113,18 +113,18 @@ export const EventDetails = ({
       </div>
 
       <div className="container px-4 py-6 lg:py-8">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="w-full lg:w-2/3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+              <div className="mb-4 sm:mb-0">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">
                   {event?.title}
                 </h1>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   {event?.description}
                 </p>
               </div>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-2">
                 <PreRegisterGuestDialog params={resolvedParams} />
                 <Button onClick={() => handleCopyLink(String(event?.uuid))}>
                   <Link2 className="h-4 w-4" />
@@ -138,12 +138,12 @@ export const EventDetails = ({
                 )}
               </div>
             </div>
-            <div className="grid gap-2 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 mb-6">
               <div className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Date</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {event?.dhStart
                       ? new Intl.DateTimeFormat("en-US", {
                           year: "numeric",
@@ -158,7 +158,7 @@ export const EventDetails = ({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2">
                 <MapPinIcon className="h-5 w-5 text-muted-foreground" />
                 <div>
                   {event?.type === "ONLINE" ? (
@@ -166,12 +166,12 @@ export const EventDetails = ({
                       href={event?.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-indigo-500 underline"
+                      className="text-xs sm:text-sm text-indigo-500 underline break-all"
                     >
                       {event?.link}
                     </a>
                   ) : (
-                    <p className="text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {event?.address} {event?.zipCode}
                     </p>
                   )}
@@ -181,7 +181,7 @@ export const EventDetails = ({
                 <TicketIcon className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Confirmed</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {event?.confirmed} / {event?.peopleLimit} Confirmed
                   </p>
                 </div>
@@ -191,17 +191,19 @@ export const EventDetails = ({
               <GuestList eventUuid={event?.uuid || ""} />
             </div>
           </div>
-          <div className="lg:col-span-1">
-            <Card>
-              <CardContent className="p-6 flex flex-col items-center">
-                <div className="flex justify-center items-center w-full h-full">
-                  <AttendeesChart
-                    confirmed={Number(event?.confirmed)}
-                    peopleLimit={Number(event?.peopleLimit)}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+          <div className="w-full lg:w-1/3">
+            <div className="sticky top-6">
+              <Card>
+                <CardContent className="p-4 sm:p-6 flex flex-col items-center">
+                  <div className="flex justify-center items-center w-full h-full">
+                    <AttendeesChart
+                      confirmed={Number(event?.confirmed)}
+                      peopleLimit={Number(event?.peopleLimit)}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>

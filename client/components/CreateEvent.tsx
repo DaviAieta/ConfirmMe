@@ -49,7 +49,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleCreatedEvent = async (e: any) => {
+  const handleCreatedEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
@@ -78,6 +78,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
         });
         setEvents((prevEvents) => [...prevEvents, response.data]);
         setIsDialogOpen(false);
+        resetForm();
       } else {
         toast({
           title: String(response.status),
@@ -120,33 +121,50 @@ export const CreateEvents = ({ setEvents }: Event) => {
     }
   };
 
+  const resetForm = () => {
+    setCategory("");
+    setTitle("");
+    setDescription("");
+    setDhStart("");
+    setDhEnd("");
+    setAddress("");
+    setZipCode("");
+    setLink("");
+    setPeopleLimit("");
+    setType("");
+  };
+
   useEffect(() => {
     getCategories();
   }, []);
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-indigo-500 hover:bg-indigo-600 w-56">
-          <PlusIcon className="w-3 h-3" /> New Event
+        <Button className="bg-indigo-500 hover:bg-indigo-600 w-full sm:w-auto">
+          <PlusIcon className="w-4 h-4 mr-2" /> New Event
         </Button>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="w-full sm:max-w-[425px] md:max-w-[600px] lg:max-w-[800px] max-h-screen flex flex-col">
         <DialogHeader>
           <DialogTitle>Create Event</DialogTitle>
           <DialogDescription>
             Fill in the fields to add a new event
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleCreatedEvent}>
+        <form
+          onSubmit={handleCreatedEvent}
+          className="space-y-4 flex-grow overflow-auto"
+        >
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="category" className="sm:text-right">
                 Category
               </Label>
-              <div className="col-span-3 flex items-center gap-2">
-                <Select onValueChange={setCategory}>
-                  <SelectTrigger className="w-[180px]">
+              <div className="sm:col-span-3 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <Select onValueChange={setCategory} value={category}>
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -163,8 +181,8 @@ export const CreateEvents = ({ setEvents }: Event) => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <p className="mt-2 text-sm text-gray-500">
-                  Don't have a category? <br />
+                <p className="text-sm text-gray-500">
+                  Don't have a category?
                   <a
                     href="/categories"
                     className="text-indigo-500 hover:underline"
@@ -174,29 +192,29 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 </p>
               </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="title" className="sm:text-right">
                 Title
               </Label>
               <Input
                 id="title"
-                className="col-span-3"
+                className="sm:col-span-3"
                 value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                }}
+                onChange={(e) => setTitle(e.target.value)}
+                required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="type" className="sm:text-right">
                 Type
               </Label>
               <Select
                 onValueChange={(value) =>
                   setType(value as "ONLINE" | "INPERSON")
                 }
+                value={type}
               >
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-full sm:w-[180px]">
                   <SelectValue placeholder="Select a type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -208,54 +226,52 @@ export const CreateEvents = ({ setEvents }: Event) => {
               </Select>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="description" className="sm:text-right">
                 Description
               </Label>
               <Input
                 id="description"
-                className="col-span-3"
+                className="sm:col-span-3"
                 value={description}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                }}
+                onChange={(e) => setDescription(e.target.value)}
+                required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="dhStart" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="dhStart" className="sm:text-right">
                 Start
               </Label>
               <DateTimePicker onChange={setDhStart} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="dhEnd" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="dhEnd" className="sm:text-right">
                 Finish
               </Label>
               <DateTimePicker onChange={setDhEnd} />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="zipCode" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="zipCode" className="sm:text-right">
                 Zip Code
               </Label>
               <Input
                 id="zipCode"
-                className={`col-span-3 ${
+                className={`sm:col-span-3 ${
                   type === "ONLINE" ? "bg-gray-100 cursor-not-allowed" : ""
                 }`}
                 value={zipCode}
-                onChange={(e) => {
-                  setZipCode(e.target.value);
-                }}
+                onChange={(e) => setZipCode(e.target.value)}
                 maxLength={5}
+                disabled={type === "ONLINE"}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="address" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="address" className="sm:text-right">
                 Address
               </Label>
               <Input
                 id="address"
-                className={`col-span-3 ${
+                className={`sm:col-span-3 ${
                   type === "ONLINE" ? "bg-gray-100 cursor-not-allowed" : ""
                 }`}
                 value={address}
@@ -263,13 +279,13 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 disabled={type === "ONLINE"}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="link" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="link" className="sm:text-right">
                 Link
               </Label>
               <Input
                 id="link"
-                className={`col-span-3 ${
+                className={`sm:col-span-3 ${
                   type === "INPERSON" ? "bg-gray-100 cursor-not-allowed" : ""
                 }`}
                 value={link}
@@ -277,30 +293,30 @@ export const CreateEvents = ({ setEvents }: Event) => {
                 disabled={type === "INPERSON"}
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="peopleLimit" className="text-right">
+            <div className="grid grid-cols-1 sm:grid-cols-4 items-center gap-4">
+              <Label htmlFor="peopleLimit" className="sm:text-right">
                 People Limit
               </Label>
               <Input
                 id="peopleLimit"
-                className="col-span-3"
+                className="sm:col-span-3"
                 value={peopleLimit}
-                onChange={(e) => {
-                  setPeopleLimit(e.target.value);
-                }}
+                onChange={(e) => setPeopleLimit(e.target.value)}
+                type="number"
+                min="1"
               />
             </div>
           </div>
           <DialogFooter>
             <Button
               type="submit"
-              className="bg-indigo-500 hover:bg-indigo-600"
+              className="bg-indigo-500 hover:bg-indigo-600 w-full sm:w-auto"
               disabled={submitting}
             >
               {submitting ? (
-                <ReloadIcon className="animate-spin" />
+                <ReloadIcon className="animate-spin mr-2" />
               ) : (
-                "Register"
+                "Register Event"
               )}
             </Button>
           </DialogFooter>
