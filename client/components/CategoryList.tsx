@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "./ui/input";
 import { CreateCategory } from "./CategoryCreate";
 import { Spinner } from "./Spinner";
+import { useAuth } from "@clerk/nextjs";
 
 export const ListCategories = () => {
   const [categories, setCategories] = useState<CategoryProps[]>([]);
@@ -17,11 +18,14 @@ export const ListCategories = () => {
   const [search, setSearch] = useState("");
   const { toast } = useToast();
 
+  const { userId } = useAuth();
+
   const getCategories = async () => {
     try {
       const response = await fetchAdapter({
         method: "GET",
         path: "categories",
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status === 200) {
         const categoriesWithCount = response.data.map((category: any) => ({

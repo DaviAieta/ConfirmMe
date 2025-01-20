@@ -20,6 +20,7 @@ import { PlusIcon } from "lucide-react";
 import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { useToast } from "@/hooks/use-toast";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { useAuth } from "@clerk/nextjs";
 
 export type Event = {
   setCategories: Dispatch<SetStateAction<CategoryProps[]>>;
@@ -30,6 +31,8 @@ export const CreateCategory = ({ setCategories }: Event) => {
   const [color, setColor] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+
+  const { userId } = useAuth();
 
   const handleCreateCategory = async (e: any) => {
     e.preventDefault();
@@ -42,6 +45,7 @@ export const CreateCategory = ({ setCategories }: Event) => {
         body: {
           name,
           color,
+          userId,
         },
       });
       if (response.status == 200) {

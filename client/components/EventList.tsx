@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import { CreateEvents } from "./CreateEvent";
 import { EventProps } from "../app/events/types";
@@ -10,6 +10,7 @@ import { Spinner } from "./Spinner";
 import { Input } from "./ui/input";
 import Link from "next/link";
 import { EventCard } from "./EventCard";
+import { useAuth } from "@clerk/nextjs";
 
 export function ListEvents() {
   const [events, setEvents] = useState<EventProps[]>([]);
@@ -17,11 +18,14 @@ export function ListEvents() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  const { userId } = useAuth();
+
   const getEvents = async () => {
     try {
       const response = await fetchAdapter({
         method: "GET",
         path: "events",
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status === 200) {
         setEvents(response.data);

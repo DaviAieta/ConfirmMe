@@ -6,7 +6,27 @@ import { Validator } from "../validators/validator";
 export class EventsController {
   static async list(req: Request, res: Response) {
     try {
-      const events = await prisma.events.findMany({});
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+        return res.status(401).json("Authorization header is required.");
+      }
+      const token = authHeader.split(" ")[1];
+      if (!token) {
+        return res.status(401).json("Token is missing.");
+      }
+
+      const user = await prisma.users.findUnique({
+        where: { token },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
+      const events = await prisma.events.findMany({
+        where: { usersId: user.id },
+      });
 
       return res.send(events);
     } catch {
@@ -17,7 +37,6 @@ export class EventsController {
   static async create(req: Request, res: Response) {
     try {
       const event = req.body;
-      console.log(event.dhEnd);
 
       const validationResult = Validator.dataEvent(event);
 

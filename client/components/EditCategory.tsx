@@ -22,6 +22,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from "./ui/dialog";
+import { useAuth } from "@clerk/nextjs";
 
 export const EditCategory: React.FC<{
   category: CategoryProps;
@@ -32,6 +33,7 @@ export const EditCategory: React.FC<{
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { userId } = useAuth();
 
   const handleEditCategory = async (e: any) => {
     e.preventDefault();
@@ -45,6 +47,7 @@ export const EditCategory: React.FC<{
           name,
           color,
           uuid: resolvedParams.uuid,
+          userId,
         },
       });
       if (response.status == 200) {

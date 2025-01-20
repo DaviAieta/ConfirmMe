@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { use } from "react";
 import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
 import { EditCategory } from "./EditCategory";
+import { useAuth } from "@clerk/nextjs";
 
 export const CategoryDetails = ({
   params,
@@ -19,11 +20,14 @@ export const CategoryDetails = ({
   const [category, setCategory] = useState<CategoryProps | null>(null);
   const { toast } = useToast();
 
+  const { userId } = useAuth();
+
   const getCategory = async () => {
     try {
       const response = await fetchAdapter({
         method: "GET",
         path: "categories/" + resolvedParams.uuid,
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status === 200) {
         const categoryData = {

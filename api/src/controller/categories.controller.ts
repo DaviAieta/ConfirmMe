@@ -6,13 +6,33 @@ import { z } from "zod";
 const categorySchema = z.object({
   name: z.string().min(1, "Name is required "),
   color: z.string().min(1, "Color is required "),
+  userId: z.string().nonempty("User ID is required"),
   uuid: z.string().optional(),
 });
 
 export class CategoriesController {
   static async list(req: Request, res: Response) {
     try {
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+        return res.status(401).json("Authorization header is required.");
+      }
+      const token = authHeader.split(" ")[1];
+      if (!token) {
+        return res.status(401).json("Token is missing.");
+      }
+
+      const user = await prisma.users.findUnique({
+        where: { token },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const categories = await prisma.categories.findMany({
+        where: { usersId: user.id },
         include: {
           _count: {
             select: { Events: true },
@@ -33,10 +53,19 @@ export class CategoriesController {
     try {
       const category = categorySchema.parse(req.body);
 
+      const user = await prisma.users.findUnique({
+        where: { token: category.userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const createdCategory = await prisma.categories.create({
         data: {
           name: category.name,
           color: category.color,
+          usersId: user.id,
         },
       });
 
@@ -53,6 +82,25 @@ export class CategoriesController {
   static async findOne(req: Request, res: Response) {
     try {
       const { uuid } = req.params;
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+        return res.status(401).json("Authorization header is required.");
+      }
+
+      const token = authHeader.split(" ")[1];
+      if (!token) {
+        return res.status(401).json("Token is missing.");
+      }
+
+      const user = await prisma.users.findUnique({
+        where: { token },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const category = await prisma.categories.findUnique({
         where: { uuid },
         include: {
@@ -71,8 +119,10 @@ export class CategoriesController {
         },
       });
 
-      if (!category) {
-        return res.status(400).json("Category Not Found");
+      if (!category || category.usersId !== user.id) {
+        return res
+          .status(403)
+          .json("You are not authorized to view this category.");
       }
 
       return res.send(category);
@@ -83,7 +133,16 @@ export class CategoriesController {
 
   static async delete(req: Request, res: Response) {
     try {
-      const { uuid } = req.body;
+      const { uuid, userId } = req.body;
+
+      const user = await prisma.users.findUnique({
+        where: { token: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const category = await prisma.categories.findUnique({
         where: { uuid },
         include: {
@@ -118,6 +177,14 @@ export class CategoriesController {
   static async update(req: Request, res: Response) {
     try {
       const category = categorySchema.parse(req.body);
+
+      const user = await prisma.users.findUnique({
+        where: { token: category.userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
 
       const updatedEvent = await prisma.categories.update({
         where: {

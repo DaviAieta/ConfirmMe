@@ -28,6 +28,7 @@ import {
 import { PlusIcon } from "lucide-react";
 import { CategoryProps } from "@/app/categories/types";
 import { DateTimePicker } from "./DateTimePicker";
+import { useAuth } from "@clerk/nextjs";
 
 export type Event = {
   setEvents: Dispatch<SetStateAction<EventProps[]>>;
@@ -48,6 +49,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const handleCreatedEvent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +104,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
       const response = await fetchAdapter({
         method: "GET",
         path: "categories",
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status === 200) {
         setCategories(response.data);

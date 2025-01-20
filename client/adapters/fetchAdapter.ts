@@ -6,10 +6,12 @@ export const fetchAdapter = async ({
   method,
   path,
   body,
+  headers,
 }: {
   method: HttpMethod;
   path: string;
   body?: Record<any, any>;
+  headers?: Record<string, string>;
 }) => {
   const res = await axios({
     method,
@@ -17,6 +19,7 @@ export const fetchAdapter = async ({
     data: body,
     headers: {
       "Content-Type": "application/json",
+      ...headers,
     },
   });
   const responses = {

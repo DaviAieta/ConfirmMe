@@ -16,6 +16,7 @@ import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { useAuth } from "@clerk/nextjs";
 
 export const DeleteCategoryDialog = ({
   resolvedParams,
@@ -27,6 +28,7 @@ export const DeleteCategoryDialog = ({
   const { toast } = useToast();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
+  const { userId } = useAuth();
 
   const handleDeleteCategory = async (e: any) => {
     e.preventDefault();
@@ -38,6 +40,7 @@ export const DeleteCategoryDialog = ({
         path: "categories/delete",
         body: {
           uuid: resolvedParams.uuid,
+          userId,
         },
       });
       if (response.status == 200) {

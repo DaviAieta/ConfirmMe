@@ -25,7 +25,8 @@ model Users {
   password String @db.VarChar(255)
   token    String @unique
 
-  Events Events[]
+  Events     Events[]
+  Categories Categories[]
 }
 
 model EventGuest {
@@ -78,10 +79,13 @@ model Guests {
 }
 
 model Categories {
-  id    Int    @id @default(autoincrement())
-  uuid  String @unique @default(uuid())
-  name  String @db.VarChar(255)
-  color String @db.VarChar(255)
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid())
+  name String @db.VarChar(255)
+
+  color   String @db.VarChar(255)
+  User    Users? @relation(fields: [usersId], references: [id])
+  usersId Int?
 
   Events Events[]
 }
