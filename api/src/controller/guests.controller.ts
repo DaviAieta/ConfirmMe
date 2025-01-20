@@ -8,6 +8,24 @@ export class GuestsController {
     try {
       const { uuid } = req.params;
 
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader) {
+        return res.status(401).json("Authorization header is required.");
+      }
+      const token = authHeader.split(" ")[1];
+      if (!token) {
+        return res.status(401).json("Token is missing.");
+      }
+
+      const user = await prisma.users.findUnique({
+        where: { token },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const event = await prisma.events.findUnique({
         where: { uuid },
       });
@@ -15,6 +33,11 @@ export class GuestsController {
       if (!event) {
         return res.status(400).json("Event not found");
       }
+
+      if (event.confirmed >= event.peopleLimit) {
+        return res.status(400).json("Guest limit exceeded");
+      }
+
       const guests = await prisma.eventGuest.findMany({
         where: {
           eventId: event.id,
@@ -32,7 +55,15 @@ export class GuestsController {
 
   static async bulkPreRegister(req: Request, res: Response) {
     try {
-      const { uuid, guests } = req.body;
+      const { uuid, guests, userId } = req.body;
+
+      const user = await prisma.users.findUnique({
+        where: { token: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
 
       if (!guests || guests.length === 0) {
         return res.status(400).json("No guests data found.");
@@ -44,6 +75,14 @@ export class GuestsController {
 
       if (!event) {
         return res.status(400).json("Event not found.");
+      }
+
+      if (guests.length > event.peopleLimit) {
+        return res
+          .status(400)
+          .json(
+            `Guest limit exceeded. Maximum allowed is ${event.peopleLimit} guests.`
+          );
       }
 
       const createdGuests = await Promise.all(
@@ -78,7 +117,15 @@ export class GuestsController {
 
   static async preRegister(req: Request, res: Response) {
     try {
-      const { name, email, uuid } = req.body;
+      const { name, email, uuid, userId } = req.body;
+
+      const user = await prisma.users.findUnique({
+        where: { token: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
 
       const event = await prisma.events.findUnique({
         where: { uuid },

@@ -17,6 +17,7 @@ import { Spinner } from "./Spinner";
 import { use } from "react";
 import { GuestList } from "./GuestList";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 
 export const EventDetails = ({
   params,
@@ -27,6 +28,7 @@ export const EventDetails = ({
   const [event, setEvent] = useState<EventProps | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const imageUrl = null;
 
@@ -35,6 +37,7 @@ export const EventDetails = ({
       const response = await fetchAdapter({
         method: "GET",
         path: "events/" + resolvedParams.uuid,
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status == 200) {
         setEvent(response.data);

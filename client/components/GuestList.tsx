@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GuestProps } from "@/app/events/guests/types";
 import { GuestStatus } from "./GuestStatus";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@clerk/nextjs";
 
 interface GuestListProps {
   eventUuid: string;
@@ -16,24 +17,31 @@ export function GuestList({ eventUuid }: GuestListProps) {
   const [guests, setGuests] = useState<GuestProps[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const getGuests = async () => {
     try {
       const response = await fetchAdapter({
         method: "GET",
         path: "guests/" + eventUuid,
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status == 200) {
         setGuests(response.data);
       } else {
+        toast({
+          title: String(response.status),
+          description: response.data,
+        });
         setGuests([]);
       }
-    } catch {
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data || "An unexpected error occurred.";
       toast({
         variant: "destructive",
-        title: "Error",
+        title: errorMessage,
       });
-      setGuests([]);
     } finally {
       setLoading(false);
     }

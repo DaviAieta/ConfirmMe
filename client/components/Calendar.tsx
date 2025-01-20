@@ -9,16 +9,19 @@ import { fetchAdapter } from "@/adapters/fetchAdapter";
 import { EventProps } from "@/app/events/types";
 import { formatISO } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@clerk/clerk-react";
 
 export const Calendar: React.FC = () => {
   const [events, setEvents] = useState<EventProps[]>([]);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const getEvents = async () => {
     try {
       const response = await fetchAdapter({
         method: "GET",
         path: "events",
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status == 200) {
         setEvents(response.data);

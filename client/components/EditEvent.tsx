@@ -30,6 +30,7 @@ import { EventProps } from "@/app/events/types";
 import { useRouter } from "next/navigation";
 import { CategoryProps } from "@/app/categories/types";
 import { DateTimePicker } from "./DateTimePicker";
+import { useAuth } from "@clerk/nextjs";
 
 export const EditEvent: React.FC<{
   event: EventProps;
@@ -55,12 +56,14 @@ export const EditEvent: React.FC<{
   const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const { userId } = useAuth();
 
   const getCategories = async () => {
     try {
       const response = await fetchAdapter({
         method: "GET",
         path: "categories",
+        headers: { Authorization: `Bearer ${userId}` },
       });
       if (response.status === 200) {
         setCategories(response.data);
@@ -105,6 +108,7 @@ export const EditEvent: React.FC<{
           status: "ACTIVATE",
           type,
           uuid: resolvedParams.uuid,
+          userId,
         },
       });
       if (response.status == 200) {

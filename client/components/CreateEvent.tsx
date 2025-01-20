@@ -71,6 +71,7 @@ export const CreateEvents = ({ setEvents }: Event) => {
           people_limit: peopleLimit,
           status: "ACTIVATE",
           categoriesId: Number(category),
+          userId,
         },
       });
       if (response.status == 200) {

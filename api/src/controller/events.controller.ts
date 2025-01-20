@@ -38,6 +38,14 @@ export class EventsController {
     try {
       const event = req.body;
 
+      const user = await prisma.users.findUnique({
+        where: { token: event.userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const validationResult = Validator.dataEvent(event);
 
       if (!validationResult.success) {
@@ -48,7 +56,6 @@ export class EventsController {
         return res.status(400).json(errorMessages);
       }
 
-      // Not working
       const dhStart = new Date(event.dhStart + "Z");
       const dhEnd = new Date(event.dhEnd + "Z");
 
@@ -80,6 +87,7 @@ export class EventsController {
           imagePath: event.imagePath,
           categoriesId: event.categoriesId,
           type: event.type,
+          usersId: user.id,
         },
       });
 
@@ -91,7 +99,15 @@ export class EventsController {
 
   static async delete(req: Request, res: Response) {
     try {
-      const { uuid } = req.body;
+      const { uuid, userId } = req.body;
+
+      const user = await prisma.users.findUnique({
+        where: { token: userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
 
       const event = await prisma.events.findUnique({
         where: { uuid },
@@ -139,7 +155,6 @@ export class EventsController {
 
       return res.send(deletedEvent);
     } catch (error) {
-      console.log(error);
       return res.status(400).json("An unexpected error occurred.");
     }
   }
@@ -147,11 +162,39 @@ export class EventsController {
   static async findOne(req: Request, res: Response) {
     try {
       const { uuid } = req.params;
+      const authHeader = req.headers.authorization;
+      console.log(authHeader);
+
+      if (!authHeader) {
+        return res.status(401).json("Authorization header is required.");
+      }
+
+      const token = authHeader.split(" ")[1];
+      console.log(token);
+      if (!token) {
+        return res.status(401).json("Token is missing.");
+      }
+
+      const user = await prisma.users.findUnique({
+        where: { token },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
+
       const event = await prisma.events.findUnique({
         where: { uuid },
       });
+
       if (!event) {
         return res.status(404).json("Event Not Found");
+      }
+
+      if (!event || event.usersId !== user.id) {
+        return res
+          .status(403)
+          .json("You are not authorized to view this category.");
       }
 
       return res.send(event);
@@ -163,6 +206,14 @@ export class EventsController {
   static async update(req: Request, res: Response) {
     try {
       const event = req.body;
+
+      const user = await prisma.users.findUnique({
+        where: { token: event.userId },
+      });
+
+      if (!user) {
+        return res.status(404).json("User not found.");
+      }
 
       const updatedEvent = await prisma.events.update({
         where: {

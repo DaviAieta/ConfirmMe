@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useAuth } from "@clerk/nextjs";
 
 interface Guest {
   name: string;
@@ -26,6 +27,7 @@ export const OpenCsv = ({ uuid }: { uuid: string }) => {
   const [loading, setLoading] = useState(false);
   const [hasUppercase, setHasUppercase] = useState(false);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -72,6 +74,7 @@ export const OpenCsv = ({ uuid }: { uuid: string }) => {
             body: {
               uuid,
               guests: guestData,
+              userId,
             },
           });
           if (response.status === 200) {

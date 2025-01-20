@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Spinner } from "./Spinner";
 import { OpenCsv } from "./OpenCsv";
+import { useAuth } from "@clerk/nextjs";
 
 export const PreRegisterGuestDialog = ({
   params,
@@ -27,6 +28,7 @@ export const PreRegisterGuestDialog = ({
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { userId } = useAuth();
 
   const handlePreRegister = async (e: any) => {
     e.preventDefault();
@@ -39,6 +41,7 @@ export const PreRegisterGuestDialog = ({
           name,
           email,
           uuid: params.uuid,
+          userId,
         },
       });
       if (response.status == 200) {
